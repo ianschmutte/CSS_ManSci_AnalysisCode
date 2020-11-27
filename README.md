@@ -10,7 +10,7 @@ This is one of three archives associated with this manuscript:
 
 The Analysis Data Archive contains the analysis data used as inputs for the code in this archive. Those analysis data files are derived from restricted-access sources described below, and therefore cannot be made publicly available. Access procedures are described below.
 
-The Data Preparation Code Archive includes code that transforms the raw confidential input files into the analysis data. That archive should be included with this replication package.
+The Data Preparation Code Archive includes code that transforms the raw confidential input files into the analysis data. That archive is released separately as [![DOI](https://zenodo.org/badge/316555193.svg)](https://zenodo.org/badge/latestdoi/316555193)
 
 Please direct all questions to `schmutte@uga.edu`
 
