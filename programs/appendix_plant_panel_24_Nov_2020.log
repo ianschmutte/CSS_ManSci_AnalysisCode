@@ -1,0 +1,1073 @@
+------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\appendix_pla
+> nt_panel_24_Nov_2020.log
+  log type:  text
+ opened on:  24 Nov 2020, 19:19:52
+
+. 
+. /* install any packages locally */
+. sysdir set PERSONAL "$adobase/ado/personal"
+
+. sysdir set PLUS     "$adobase/ado/plus"
+
+. sysdir set SITE     "$adobase/ado/site"
+
+. 
+. /* See https://www.stata.com/manuals13/pcreturn.pdf#pcreturn */
+. local variant = cond(c(MP),"MP",cond(c(SE),"SE",c(flavor)) )  
+
+. 
+. di "=== SYSTEM DIAGNOSTICS ==="
+=== SYSTEM DIAGNOSTICS ===
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 15.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 03 Feb 2020
+
+. di "Variant:       `variant'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    4
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. di "=========================="
+==========================
+
+. 
+end of do-file
+
+. 
+. pause on
+
+. set more off
+
+. set linesize 120                                                                                                      
+>  
+
+. 
+. 
+. /* %*************************************************************************** */
+. use "${inpath}/WMS_plantyear_with_RAIS.dta", clear
+
+. 
+. 
+. /* Correlation among management scores */
+. estpost corr zmanagement zpeople zoperations zmonitor ztarget, matrix
+
+             |      e(b)     e(rho)       e(p)   e(count) 
+-------------+--------------------------------------------
+zmanagement  |                                            
+ zmanagement |         1          1                   964 
+     zpeople |  .8591292   .8591292   4.0e-282        964 
+ zoperations |   .740924    .740924   1.6e-168        964 
+    zmonitor |  .9097179   .9097179          0        964 
+     ztarget |  .8932706   .8932706          0        964 
+zpeople      |                                            
+     zpeople |         1          1                   964 
+ zoperations |  .5330139   .5330139   7.33e-72        964 
+    zmonitor |  .6618899   .6618899   1.5e-122        964 
+     ztarget |  .6741454   .6741454   9.8e-129        964 
+zoperations  |                                            
+ zoperations |         1          1                   964 
+    zmonitor |  .6531344   .6531344   2.6e-118        964 
+     ztarget |  .5696312   .5696312   5.13e-84        964 
+zmonitor     |                                            
+    zmonitor |         1          1                   964 
+     ztarget |  .7600081   .7600081   3.1e-182        964 
+ztarget      |                                            
+     ztarget |         1          1                   964 
+
+. estimates save ${tabpath}/appendix/WMS_zmgmt_corr_table.ster, replace
+(note: file ../output/tables/appendix/WMS_zmgmt_corr_table.ster not found)
+file ../output/tables/appendix/WMS_zmgmt_corr_table.ster saved
+
+. 
+. estimates use ${tabpath}/appendix/WMS_zmgmt_corr_table.ster
+
+. eststo m1:
+
+. esttab m1 using "${tabpath}/appendix/WMS_mngscores_corr.tex", booktabs replace ///
+>   unstack compress not noobs  nodepvars nonum no nogap b(2) nostar label 
+estout m1 using `"../output/tables/appendix/WMS_mngscores_corr.tex"' ,
+ cells(b(fmt(2)))
+ varwidth(16)
+ modelwidth(9)
+ unstack
+ delimiter(&)
+ end(\\)
+ prehead(`"\begin{tabular}{l*{@E}{c}}"' `"\toprule"')
+ posthead("\midrule")
+ postfoot(`"\bottomrule"' `"\end{tabular}"')
+ label
+ varlabels(_cons Constant)
+ nonumbers
+ collabels(none)
+ substitute(_ \_ "\_cons " \_cons)
+ interaction(" $\times$ ")
+ notype
+ level(95)
+ style(esttab)
+ replace
+(note: file ../output/tables/appendix/WMS_mngscores_corr.tex not found)
+(output written to ../output/tables/appendix/WMS_mngscores_corr.tex)
+
+.   
+. esttab m1 , booktabs  ///
+>   unstack compress not noobs  no
+estout m1 ,
+ cells(b(fmt(a3) star))
+ starlevels(\sym{*} 0.05 \sym{**} 0.01 \sym{***} 0.001, label(" \(p<@\)"))
+ varwidth(10)
+ modelwidth(9)
+ unstack
+ delimiter(&)
+ end(\\)
+ prehead(`"{"' `"\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}"' `"\begin{tabular}{l*{@E}{c}}"' `"\toprule"')
+ posthead("\midrule")
+ postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize @starlegend}\\"' `"\end{tabular}"' `"}"')
+ mlabels(, depvar span prefix(\multicolumn{@span}{c}{) suffix(}))
+ numbers(\multicolumn{@span}{c}{( )})
+ collabels(none)
+ substitute(_ \_ "\_cons " \_cons)
+ interaction(" $\times$ ")
+ level(95)
+ style(esttab)
+
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{5}{c}}
+\toprule
+          &\multicolumn{5}{c}{(1)}                                                                       \\
+          &\multicolumn{5}{c}{}                                                                          \\
+          &zmanagement         &  zpeople         &zoperations         & zmonitor         &  ztarget         \\
+\midrule
+zmanagement&        1         &                  &                  &                  &                  \\
+zpeople   &    0.859\sym{***}&        1         &                  &                  &                  \\
+zoperations&    0.741\sym{***}&    0.533\sym{***}&        1         &                  &                  \\
+zmonitor  &    0.910\sym{***}&    0.662\sym{***}&    0.653\sym{***}&        1         &                  \\
+ztarget   &    0.893\sym{***}&    0.674\sym{***}&    0.570\sym{***}&    0.760\sym{***}&        1         \\
+\bottomrule
+\multicolumn{6}{l}{\footnotesize \sym{*} \(p<0.05\), \sym{**} \(p<0.01\), \sym{***} \(p<0.001\)}\\
+\end{tabular}
+}
+
+. 
+. ***********
+. * Figure 3*
+. ***********
+. 
+. binscatter zpeople zakm_pe, xtitle("Av employee FE") ytitle("Peoplel management z-Score") ///
+>  yscale(r(-.6 .6)) ylabel(-.6(.2).6) graphregion(color(white)) line(none) mcol(gs3) 
+
+. graph save "${figpath}/appendix/app_zpeople_v_pe.gph", replace
+(note: file ../output/figures/appendix/app_zpeople_v_pe.gph not found)
+(file ../output/figures/appendix/app_zpeople_v_pe.gph saved)
+
+. graph export "${figpath}/appendix/app_zpeople_v_pe.pdf", as(pdf) replace 
+(file ../output/figures/appendix/app_zpeople_v_pe.pdf written in PDF format)
+
+. 
+. ***********
+. * Figure 7*
+. ***********
+. 
+. binscatter zpeople zakm_fe, controls(lemp) line(none)  ytitle("Management Z-score") xtitle("Firm FE") mcol(gs3) 
+
+. graph save "${figpath}/appendix/app_zpeople_v_fe.gph", replace
+(note: file ../output/figures/appendix/app_zpeople_v_fe.gph not found)
+(file ../output/figures/appendix/app_zpeople_v_fe.gph saved)
+
+. graph export "${figpath}/appendix/app_zpeople_v_fe.pdf", as(pdf) replace 
+(file ../output/figures/appendix/app_zpeople_v_fe.pdf written in PDF format)
+
+. 
+. 
+. 
+. /* %*************************************************************************** */
+. ***********
+. * Models of management score *
+. ***********
+. la var lemp "Ln of firm employment (WMS)"
+
+. 
+. gen multisites = 0
+
+. replace multisites = 1 if xsite1 > 1
+(497 real changes made)
+
+. 
+. global ctrl_jole lemp i.region i.year i.own_cat lfirmage female_share i.compet_cat mis_competition c.AKM_coverage##c.A
+> KM_coverage##c.AKM_coverage 
+
+. 
+. global ctrl_add mne_yn multisites
+
+. 
+. replace degree_t = degree_t/100
+(1,097 real changes made)
+
+. 
+. qui eststo app1: areg zmanagement zakm_pe zpe_mngr_jole degree_t ${ctrl_jole} ${ctrl_add} if has_akm==1, cluster(cnpj)
+>  ab(sic2)
+
+. qui eststo app2: areg zmanagement zpe_lab  zpe_mngr degree_t ${ctrl_jole} ${ctrl_add} if has_akm==1, cluster(cnpj) ab(
+> sic2)
+
+. qui eststo app3: areg zpeople zakm_pe zpe_mngr_jole degree_t ${ctrl_jole} ${ctrl_add} if has_akm==1, cluster(cnpj) ab(
+> sic2)
+
+. qui eststo app4: areg zpeople zpe_lab  zpe_mngr degree_t ${ctrl_jole} ${ctrl_add} if has_akm==1, cluster(cnpj) ab(sic2
+> )
+
+. 
+. 
+. esttab app1 app2 app3 app4 using "${tabpath}/appendix/appendix_BBCVW_tab2_altspecs.tex", booktabs label replace ///
+>         keep(zakm_pe    zpe_mngr_jole zpe_lab zpe_mngr lemp degree_t) ///
+>         order(zakm_pe   zpe_mngr_jole zpe_lab zpe_mngr lemp degree_t ) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         scalars("N_clust Firms") ///
+>         mgroups("Management z-score", pattern(1) prefix(\multicolumn{@span}{c}{) suffix(}) span)
+(note: file ../output/tables/appendix/appendix_BBCVW_tab2_altspecs.tex not found)
+(output written to ../output/tables/appendix/appendix_BBCVW_tab2_altspecs.tex)
+
+. 
+. 
+. 
+. replace degree_t = degree_t*100
+(1,097 real changes made)
+
+. 
+. /*
+> DISPLAY IN STATA LOG
+> */
+. esttab app1 app2 app3 app4 , label replace ///
+>         keep(zakm_pe    zpe_mngr_jole zpe_lab zpe_mngr lemp degree_t) ///
+>         order(zakm_pe   zpe_mngr_jole zpe_lab zpe_mngr lemp degree_t ) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         scalars("N_clust Firms")
+
+--------------------------------------------------------------------
+                       (1)          (2)          (3)          (4)   
+--------------------------------------------------------------------
+Mean employee ~y    -0.059                     0.008                
+                   (0.075)                   (0.073)                
+Mean manager q~s     0.161*                    0.091                
+                   (0.074)                   (0.078)                
+Mean non-..-ba~d                  0.067                     0.095*  
+                                (0.037)                   (0.041)   
+Mean mana..-ba~)                  0.014                    -0.031   
+                                (0.037)                   (0.042)   
+Ln of firm emp~)     0.295***     0.296***     0.235***     0.240***
+                   (0.033)      (0.033)      (0.037)      (0.037)   
+WORK: % all wo~e     1.300***     1.317***     1.373***     1.391***
+                   (0.269)      (0.271)      (0.270)      (0.269)   
+--------------------------------------------------------------------
+Observations           964          964          964          964   
+Firms                  696          696          696          696   
+--------------------------------------------------------------------
+
+. 
+. /* %*************************************************************************** */
+. /**********     
+> * TABLE 8 *
+> ***********/    
+. la var zmanagement "z-management"
+
+. la var zpeople "z-people"
+
+. 
+.  qui eststo jole8_e1: areg w9010 zmanagement  ${ctrl_jole} ${ctrl_add} if has_akm==1, cluster(cnpj) ab(sic2)
+
+.  qui eststo jole8_e2: areg w_sd zmanagement  ${ctrl_jole} ${ctrl_add} if has_akm==1, cluster(cnpj) ab(sic2)
+
+.  qui eststo jole8_e3: areg pe9010 zmanagement  ${ctrl_jole} ${ctrl_add} if has_akm==1, cluster(cnpj) ab(sic2)
+
+.  qui eststo jole8_e4: areg pe_sd zmanagement  ${ctrl_jole} ${ctrl_add} if has_akm==1, cluster(cnpj) ab(sic2)
+
+.  qui eststo jole8_e5: areg w9010 zpeople  ${ctrl_jole}  if has_akm==1, cluster(cnpj) ab(sic2)
+
+.  qui eststo jole8_e6: areg w_sd zpeople  ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+.  qui eststo jole8_e7: areg pe9010 zpeople  ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+.  qui eststo jole8_e8: areg pe_sd zpeople  ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+. 
+.  
+.  esttab jole8* using "${tabpath}/appendix/app_ineq_altspecs.tex", booktabs label replace ///
+>         keep(zmanagement zpeople) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         scalars("N_clust Firms") ///
+>         indicate("General Controls = lemp" , labels("\cmark" "")) 
+(note: file ../output/tables/appendix/app_ineq_altspecs.tex not found)
+(output written to ../output/tables/appendix/app_ineq_altspecs.tex)
+
+.     /* mgroups("\specialcell{90-10 \\ Log Wages}" ///
+>         "\specialcell{Coefficient of \\ Variation in \\ Log Wages}" ///
+>         "\specialcell{90-10 \\ Abilty}" ///
+>         "\specialcell{Coefficient of \\ Variation in \\ Ability}", ///
+>         pattern(1 0 1 0 1 0 1 0) prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@span})) */
+. 
+.  esttab jole8* , label replace ///
+>         keep(zmanagement zpeople) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         scalars("N_clust Firms") indicate("General Controls = lemp") 
+
+------------------------------------------------------------------------------------------------------------------------
+                       (1)          (2)          (3)          (4)          (5)          (6)          (7)          (8)   
+------------------------------------------------------------------------------------------------------------------------
+z-management         0.076***     0.022***     0.075**      0.024**                                                     
+                   (0.017)      (0.006)      (0.024)      (0.009)                                                       
+z-people                                                                 0.060***     0.016**      0.069**      0.020*  
+                                                                       (0.015)      (0.005)      (0.022)      (0.008)   
+General Controls       Yes          Yes          Yes          Yes          Yes          Yes          Yes          Yes   
+------------------------------------------------------------------------------------------------------------------------
+Observations           964          964          964          964          964          964          964          964   
+Firms                  696          696          696          696          696          696          696          696   
+------------------------------------------------------------------------------------------------------------------------
+
+. eststo clear
+
+. /* %***************************************************************************
+> predict stayers
+>  */
+. gen degree_share = degree_t/100
+
+. 
+. gen samp = .
+(1,145 missing values generated)
+
+. 
+. gen zops = zoperations
+(181 missing values generated)
+
+. 
+. la var zmanagement "z-management"
+
+. la var zops        "z-operations"
+
+. la var zpeople     "z-people"
+
+. 
+. foreach depvar in zakm_pe zpe_mngr zpe_lab{
+  2.     /*get common sample*/
+.     qui reg `depvar'  ${ctrl_jole} degree_share
+  3.     replace samp = e(sample)
+  4. 
+.     /* qui eststo m2: reg zakm_pe formal i.y*/
+.     qui eststo m3: reg  `depvar' zmanagement ${ctrl_jole} ${ctrl_add} degree_share if samp==1, cluster(cnpj)
+  5.     qui eststo m4: reg  `depvar' zpeople ${ctrl_jole} ${ctrl_add} degree_share if samp==1, cluster(cnpj)
+  6.     qui eststo m5: reg  `depvar' zops ${ctrl_jole} ${ctrl_add} degree_share if samp==1, cluster(cnpj)
+  7.     qui eststo m6: reg  `depvar' zops zpeople ${ctrl_jole} ${ctrl_add} degree_share if samp==1,  cluster(cnpj)
+  8. 
+. if "`depvar'" == "zakm_pe" {
+  9.         local mt "Outcome variable: Worker FE"
+ 10.         di "`mt'"
+ 11.         }
+ 12. else if "`depvar'" == "zpe_mngr" {
+ 13.         local mt "Outcome variable: Manager FE"
+ 14.         di "`mt'"
+ 15.         }
+ 16. else if "`depvar'" == "zpe_lab" {
+ 17.         local mt "Outcome variable: Production worker FE"
+ 18.         di "`mt'"
+ 19.         }
+ 20. 
+.     esttab m3 m5 m4 m6, ///
+>         keep(zmanagement zops zpeople) ///      
+>         order(zmanagement zops zpeople) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         stats(N N_clust , fmt(0 0) ///
+>         labels(`"\# Observations"' `"\# Firms"'))       ///
+>         starlevels( * 0.10 ** 0.05 *** 0.01) ///
+>         indicate("Year controls = _cons" "Full controls = lemp" "College share = degree_share"  , labels("\cmark" ""))
+>  ///
+>         mgroups("`mt'", pattern(1 0 0 0) prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@span}))
+ 21. 
+. 
+.     esttab m3 m5 m4 m6 using "${tabpath}/appendix/app_`depvar'_pred_add_ctrls.tex", booktabs label replace ///
+>         keep(zmanagement zops zpeople) ///      
+>         order(zmanagement zops zpeople) ///
+>         compress collabels(none) nodepvars nogap nomtitle  ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>          stats(N N_clust , fmt(0 0) ///
+>         labels(`"\# Observations"' `"\# Firms"'))       ///
+>         starlevels( * 0.10 ** 0.05 *** 0.01) ///
+>         indicate("Year controls = _cons" "Full controls = lemp" "College share = degree_share"  , labels("\cmark" ""))
+>  ///
+>         mgroups("`mt'", pattern(1 0 0 0) prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@span}))
+ 22. 
+.         eststo clear
+ 23. }
+(1,145 real changes made)
+Outcome variable: Worker FE
+
+--------------------------------------------------------------
+           \multicolumn{4}{c}{Outcome variable: Worker FE}    \cmidrule(lr){2-5}
+                 (1)          (2)          (3)          (4)   
+--------------------------------------------------------------
+zmanagem~t     0.060*                                         
+             (0.033)                                          
+zops                        0.039                     0.020   
+                          (0.030)                   (0.034)   
+zpeople                                  0.054*       0.045   
+                                       (0.030)      (0.034)   
+Year con~s    \cmark       \cmark       \cmark       \cmark   
+Full con~s    \cmark       \cmark       \cmark       \cmark   
+College ~e    \cmark       \cmark       \cmark       \cmark   
+--------------------------------------------------------------
+\# Obser~s       964          964          964          964   
+\# Firms         696          696          696          696   
+--------------------------------------------------------------
+(note: file ../output/tables/appendix/app_zakm_pe_pred_add_ctrls.tex not found)
+(output written to ../output/tables/appendix/app_zakm_pe_pred_add_ctrls.tex)
+(0 real changes made)
+Outcome variable: Manager FE
+
+--------------------------------------------------------------
+           \multicolumn{4}{c}{Outcome variable: Manager FE}   \cmidrule(lr){2-5}
+                 (1)          (2)          (3)          (4)   
+--------------------------------------------------------------
+zmanagem~t     0.068**                                        
+             (0.033)                                          
+zops                        0.064**                   0.070** 
+                          (0.029)                   (0.033)   
+zpeople                                  0.015       -0.015   
+                                       (0.030)      (0.033)   
+Year con~s    \cmark       \cmark       \cmark       \cmark   
+Full con~s    \cmark       \cmark       \cmark       \cmark   
+College ~e    \cmark       \cmark       \cmark       \cmark   
+--------------------------------------------------------------
+\# Obser~s       964          964          964          964   
+\# Firms         696          696          696          696   
+--------------------------------------------------------------
+(note: file ../output/tables/appendix/app_zpe_mngr_pred_add_ctrls.tex not found)
+(output written to ../output/tables/appendix/app_zpe_mngr_pred_add_ctrls.tex)
+(0 real changes made)
+Outcome variable: Production worker FE
+
+--------------------------------------------------------------
+           \multicolumn{4}{c}{Outcome variable: Production worker FE}\cmidrule(lr){2-5}
+                 (1)          (2)          (3)          (4)   
+--------------------------------------------------------------
+zmanagem~t     0.066**                                        
+             (0.034)                                          
+zops                        0.048                     0.027   
+                          (0.029)                   (0.034)   
+zpeople                                  0.060**      0.049   
+                                       (0.030)      (0.035)   
+Year con~s    \cmark       \cmark       \cmark       \cmark   
+Full con~s    \cmark       \cmark       \cmark       \cmark   
+College ~e    \cmark       \cmark       \cmark       \cmark   
+--------------------------------------------------------------
+\# Obser~s       964          964          964          964   
+\# Firms         696          696          696          696   
+--------------------------------------------------------------
+(note: file ../output/tables/appendix/app_zpe_lab_pred_add_ctrls.tex not found)
+(output written to ../output/tables/appendix/app_zpe_lab_pred_add_ctrls.tex)
+
+. 
+. 
+. 
+. 
+. /* %*************************************************************************** 
+> PANEL STUFF
+> */
+. egen plantid = group(cnpj)
+(99 missing values generated)
+
+. drop if plantid == .
+(99 observations deleted)
+
+. sort plantid year
+
+. xtset plantid year
+       panel variable:  plantid (unbalanced)
+        time variable:  year, 2008 to 2013, but with gaps
+                delta:  1 unit
+
+. xtdescribe
+
+ plantid:  1, 2, ..., 745                                    n =        745
+    year:  2008, 2013, ..., 2013                             T =          2
+           Delta(year) = 1 unit
+           Span(year)  = 6 periods
+           (plantid*year uniquely identifies each observation)
+
+Distribution of T_i:   min      5%     25%       50%       75%     95%     max
+                         1       1       1         1         2       2       2
+
+     Freq.  Percent    Cum. |  Pattern*
+ ---------------------------+----------
+      301     40.40   40.40 |  11
+      227     30.47   70.87 |  .1
+      217     29.13  100.00 |  1.
+ ---------------------------+----------
+      745    100.00         |  XX
+ --------------------------------------
+ *Each column represents 5 periods.
+
+
+. by plantid: gen numobs = _N
+
+. by plantid: gen l_zmanagement = zmanagement[_n-1] if numobs==2 & year==2013
+(763 missing values generated)
+
+. by plantid: gen l_management = management[_n-1] if numobs==2 & year==2013
+(745 missing values generated)
+
+. by plantid: gen l_zpeople = zpeople[_n-1] if numobs==2 & year==2013
+(763 missing values generated)
+
+. by plantid: gen l_zops = zops[_n-1] if numobs==2 & year==2013
+(763 missing values generated)
+
+. 
+. xtsum management 
+
+Variable         |      Mean   Std. Dev.       Min        Max |    Observations
+-----------------+--------------------------------------------+----------------
+manage~t overall |  2.692154   .6428742   1.055556   4.722222 |     N =    1046
+         between |             .6238499   1.055556   4.666667 |     n =     745
+         within  |             .2261167   1.664377   3.719932 | T-bar = 1.40403
+
+. xtsum management if numobs==2
+
+Variable         |      Mean   Std. Dev.       Min        Max |    Observations
+-----------------+--------------------------------------------+----------------
+manage~t overall |  2.737932   .6178929   1.111111   4.722222 |     N =     602
+         between |             .5416444   1.222222       4.25 |     n =     301
+         within  |             .2981629   1.710155    3.76571 |     T =       2
+
+. 
+. corr management l_management if numobs==2 & year==2013
+(obs=301)
+
+             | manage~t l_mana~t
+-------------+------------------
+  management |   1.0000
+l_management |   0.5410   1.0000
+
+
+. 
+. scatter management l_management if numobs==2 & year==2013 , xtitle("2008 management score") ytitle("2013 management sc
+> ore") ///
+>  graphregion(color(white)) mcol(gs3) 
+
+. graph save "${figpath}/appendix/app_management_scatter.gph", replace
+(note: file ../output/figures/appendix/app_management_scatter.gph not found)
+(file ../output/figures/appendix/app_management_scatter.gph saved)
+
+. graph export "${figpath}/appendix/app_management_scatter.pdf", as(pdf) replace 
+(file ../output/figures/appendix/app_management_scatter.pdf written in PDF format)
+
+. 
+. global ctrl_small i.year i.own_cat female_share i.compet_cat mis_competition c.AKM_coverage##c.AKM_coverage##c.AKM_cov
+> erage 
+
+.  qui eststo jole8_e1: areg lemp zmanagement   if has_akm==1 & numobs==2 , cluster(cnpj) ab(cnpj)
+
+.  qui eststo jole8_e2: areg lemp zmanagement  ${ctrl_jole}  if has_akm==1 & numobs==2 , cluster(cnpj) ab(cnpj)
+
+.   qui eststo jole8_e3: areg degree_share zmanagement   if has_akm==1 & numobs==2 , cluster(cnpj) ab(cnpj)
+
+.  qui eststo jole8_e4: areg degree_share zmanagement  ${ctrl_jole}  if has_akm==1 & numobs==2 , cluster(cnpj) ab(cnpj)
+
+.    qui eststo jole8_e5: areg zakm_pe zmanagement   if has_akm==1 & numobs==2 , cluster(cnpj) ab(cnpj)
+
+.  qui eststo jole8_e6: areg zakm_pe zmanagement  ${ctrl_jole}  if has_akm==1 & numobs==2 , cluster(cnpj) ab(cnpj)
+
+. 
+.      esttab jole8*, ///
+>         keep(zmanagement) ///   
+>         order(zmanagement) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         stats(N N_clust , fmt(0 0) ///
+>         labels(`"\# Observations"' `"\# Firms"'))       ///
+>         starlevels( * 0.10 ** 0.05 *** 0.01)
+
+----------------------------------------------------------------------------------------
+                 (1)          (2)          (3)          (4)          (5)          (6)   
+----------------------------------------------------------------------------------------
+zmanagem~t     0.008        0.000       -0.001        0.003        0.002       -0.023   
+             (0.065)      (0.000)      (0.012)      (0.013)      (0.055)      (0.063)   
+----------------------------------------------------------------------------------------
+\# Obser~s       554          554          554          554          554          554   
+\# Firms         286          286          286          286          286          286   
+----------------------------------------------------------------------------------------
+
+. 
+. eststo clear
+
+. 
+. egen sicnum = group(sic2)
+
+. 
+. foreach v in w9010 w_sd pe9010 pe_sd{
+  2.         qui eststo e1: areg `v' zmanagement  ${ctrl_jole}  if has_akm==1 & numobs==2, cluster(cnpj) ab(sic2)
+  3.         qui eststo e2: areg `v' zmanagement  ${ctrl_jole}  if has_akm==1 & numobs==2, cluster(cnpj) ab(cnpj)
+  4.         qui eststo e3: areg `v' zmanagement  ${ctrl_jole}  if has_akm==1 & numobs==2 & year==2013, cluster(cnpj) ab
+> (sic2)
+  5.         qui eststo e4: ivreg2 `v' ${ctrl_jole} i.sicnum (zmanagement = l_zmanagement) if has_akm==1 & numobs ==2 & 
+> year==2013, cluster(cnpj) 
+  6. 
+.         esttab e1 e2 e3 e4, ///
+>                 title(Models for `v') ///
+>                         keep(zmanagement) ///   
+>                         order(zmanagement) ///
+>                         compress collabels(none) nodepvars nogap nomtitle ///
+>                         cells(b(star fmt(3)) se(par fmt(3))) ///
+>                         stats(N N_clust , fmt(0 0) ///
+>                 labels(`"\# Observations"' `"\# Firms"'))       ///
+>                 starlevels( * 0.10 ** 0.05 *** 0.01)
+  7. 
+.         eststo clear
+  8. }
+Warning: estimated covariance matrix of moment conditions not of full rank.
+         overidentification statistic not reported, and standard errors and
+         model tests should be interpreted with caution.
+Possible causes:
+         number of clusters insufficient to calculate robust covariance matrix
+         singleton dummy variable (dummy with one 1 and N-1 0s or vice versa)
+partial option may address problem.
+
+Models for w9010
+--------------------------------------------------------------
+                 (1)          (2)          (3)          (4)   
+--------------------------------------------------------------
+zmanagem~t     0.080***     0.000        0.101**      0.367***
+             (0.023)      (0.033)      (0.039)      (0.082)   
+--------------------------------------------------------------
+\# Obser~s       554          554          271          268   
+\# Firms         286          286          271          268   
+--------------------------------------------------------------
+Warning: estimated covariance matrix of moment conditions not of full rank.
+         overidentification statistic not reported, and standard errors and
+         model tests should be interpreted with caution.
+Possible causes:
+         number of clusters insufficient to calculate robust covariance matrix
+         singleton dummy variable (dummy with one 1 and N-1 0s or vice versa)
+partial option may address problem.
+
+Models for w_sd
+--------------------------------------------------------------
+                 (1)          (2)          (3)          (4)   
+--------------------------------------------------------------
+zmanagem~t     0.027***     0.003        0.030**      0.125***
+             (0.009)      (0.012)      (0.014)      (0.031)   
+--------------------------------------------------------------
+\# Obser~s       554          554          271          268   
+\# Firms         286          286          271          268   
+--------------------------------------------------------------
+Warning: estimated covariance matrix of moment conditions not of full rank.
+         overidentification statistic not reported, and standard errors and
+         model tests should be interpreted with caution.
+Possible causes:
+         number of clusters insufficient to calculate robust covariance matrix
+         singleton dummy variable (dummy with one 1 and N-1 0s or vice versa)
+partial option may address problem.
+
+Models for pe9010
+--------------------------------------------------------------
+                 (1)          (2)          (3)          (4)   
+--------------------------------------------------------------
+zmanagem~t     0.100***     0.012        0.140***     0.544***
+             (0.032)      (0.039)      (0.053)      (0.139)   
+--------------------------------------------------------------
+\# Obser~s       554          554          271          268   
+\# Firms         286          286          271          268   
+--------------------------------------------------------------
+Warning: estimated covariance matrix of moment conditions not of full rank.
+         overidentification statistic not reported, and standard errors and
+         model tests should be interpreted with caution.
+Possible causes:
+         number of clusters insufficient to calculate robust covariance matrix
+         singleton dummy variable (dummy with one 1 and N-1 0s or vice versa)
+partial option may address problem.
+
+Models for pe_sd
+--------------------------------------------------------------
+                 (1)          (2)          (3)          (4)   
+--------------------------------------------------------------
+zmanagem~t     0.036***     0.002        0.046**      0.199***
+             (0.012)      (0.016)      (0.020)      (0.058)   
+--------------------------------------------------------------
+\# Obser~s       554          554          271          268   
+\# Firms         286          286          271          268   
+--------------------------------------------------------------
+
+. 
+. foreach depvar in zakm_pe zpe_mngr zpe_lab{
+  2.     /*get common sample*/
+. 
+.     qui eststo m3: areg  `depvar' zmanagement ${ctrl_jole}  degree_share if has_akm==1 & numobs==2 , absorb(sic2) clus
+> ter(cnpj)
+  3.     qui eststo m4: areg  `depvar' zpeople ${ctrl_jole}  degree_share if has_akm==1 & numobs==2 , absorb(sic2) clust
+> er(cnpj)
+  4.     qui eststo m5: areg  `depvar' zops ${ctrl_jole}  degree_share if has_akm==1 & numobs==2 , absorb(sic2) cluster(
+> cnpj)
+  5.     qui eststo m6: areg  `depvar' zops zpeople ${ctrl_jole} degree_share if has_akm==1 & numobs==2 , absorb(sic2) c
+> luster(cnpj)
+  6. 
+.     esttab m3 m5 m4 m6, ///
+>                 title(Pooled OLS Estimates for 2008 and 2013: `depvar') ///
+>         keep(zmanagement zops zpeople) ///      
+>         order(zmanagement zops zpeople) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         stats(N N_clust , fmt(0 0) ///
+>         labels(`"\# Observations"' `"\# Firms"'))       ///
+>         starlevels( * 0.10 ** 0.05 *** 0.01) 
+  7. 
+.     eststo clear
+  8. 
+.     qui eststo m3: areg  `depvar' zmanagement ${ctrl_jole}  degree_share if has_akm==1 & numobs==2 , absorb(cnpj) clus
+> ter(cnpj)
+  9.     qui eststo m4: areg  `depvar' zpeople ${ctrl_jole}  degree_share if has_akm==1 & numobs==2 , absorb(cnpj) clust
+> er(cnpj)
+ 10.     qui eststo m5: areg  `depvar' zops ${ctrl_jole}  degree_share if has_akm==1 & numobs==2 , absorb(cnpj) cluster(
+> cnpj)
+ 11.     qui eststo m6: areg  `depvar' zops zpeople ${ctrl_jole} degree_share if has_akm==1 & numobs==2 , absorb(cnpj) c
+> luster(cnpj)
+ 12. 
+.     esttab m3 m5 m4 m6, ///
+>             title(FE Estimates for 2008 and 2013: `depvar') ///
+>         keep(zmanagement zops zpeople) ///      
+>         order(zmanagement zops zpeople) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         stats(N N_clust , fmt(0 0) ///
+>         labels(`"\# Observations"' `"\# Firms"'))       ///
+>         starlevels( * 0.10 ** 0.05 *** 0.01) 
+ 13. 
+.     eststo clear
+ 14. 
+. /* qui eststo m2: reg zakm_pe formal i.y*/
+.     qui eststo m3: areg  `depvar' zmanagement ${ctrl_jole}  degree_share if has_akm==1 & numobs==2 & year==2013, absor
+> b(sic2) cluster(cnpj)
+ 15.     qui eststo m4: areg  `depvar' zpeople ${ctrl_jole}  degree_share if has_akm==1 & numobs==2 & year==2013, absorb
+> (sic2) cluster(cnpj)
+ 16.     qui eststo m5: areg  `depvar' zops ${ctrl_jole}  degree_share if has_akm==1 & numobs==2 & year==2013, absorb(si
+> c2) cluster(cnpj)
+ 17.     qui eststo m6: areg  `depvar' zops zpeople ${ctrl_jole} degree_share if has_akm==1 & numobs==2 & year==2013, ab
+> sorb(sic2) cluster(cnpj)
+ 18. 
+.     esttab m3 m5 m4 m6, ///
+>             title(Cross-section OLS Estimates for 2013: `depvar') ///
+>         keep(zmanagement zops zpeople) ///      
+>         order(zmanagement zops zpeople) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         stats(N N_clust , fmt(0 0) ///
+>         labels(`"\# Observations"' `"\# Firms"'))       ///
+>         starlevels( * 0.10 ** 0.05 *** 0.01) 
+ 19. 
+.     eststo clear
+ 20. 
+. 
+.     qui eststo m3: ivreg2  `depvar'  (zmanagement = l_zmanagement) ${ctrl_jole} degree_share i.sicnum if has_akm==1 & 
+> numobs==2 & year==2013, cluster(cnpj)
+ 21.     qui eststo m4: ivreg2  `depvar' (zpeople = l_zpeople)  ${ctrl_jole} degree_share i.sicnum if has_akm==1 & numob
+> s==2 & year==2013, cluster(cnpj)
+ 22.     qui eststo m5: ivreg2  `depvar' (zops = l_zops)  ${ctrl_jole}  degree_share i.sicnum if has_akm==1 & numobs==2 
+> & year==2013, cluster(cnpj)
+ 23.     qui eststo m6: ivreg2  `depvar' (zops zpeople = l_zops l_zpeople ) ${ctrl_jole}  degree_share i.sicnum if has_a
+> km==1 & numobs==2 & year==2013,  cluster(cnpj)
+ 24. 
+.         esttab m3 m5 m4 m6, ///
+>             title(IV Estimates for 2013: `depvar') ///
+>         keep(zmanagement zops zpeople) ///      
+>         order(zmanagement zops zpeople) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         stats(N N_clust , fmt(0 0) ///
+>         labels(`"\# Observations"' `"\# Firms"'))       ///
+>         starlevels( * 0.10 ** 0.05 *** 0.01) 
+ 25. 
+. eststo clear
+ 26. }
+
+Pooled OLS Estimates for 2008 and 2013: zakm_pe
+--------------------------------------------------------------
+                 (1)          (2)          (3)          (4)   
+--------------------------------------------------------------
+zmanagem~t     0.047                                          
+             (0.047)                                          
+zops                       -0.006                    -0.034   
+                          (0.047)                   (0.052)   
+zpeople                                  0.054        0.067   
+                                       (0.039)      (0.044)   
+--------------------------------------------------------------
+\# Obser~s       554          554          554          554   
+\# Firms         286          286          286          286   
+--------------------------------------------------------------
+
+FE Estimates for 2008 and 2013: zakm_pe
+--------------------------------------------------------------
+                 (1)          (2)          (3)          (4)   
+--------------------------------------------------------------
+zmanagem~t    -0.022                                          
+             (0.062)                                          
+zops                       -0.074*                   -0.077*  
+                          (0.045)                   (0.046)   
+zpeople                                 -0.017        0.009   
+                                       (0.043)      (0.043)   
+--------------------------------------------------------------
+\# Obser~s       554          554          554          554   
+\# Firms         286          286          286          286   
+--------------------------------------------------------------
+
+Cross-section OLS Estimates for 2013: zakm_pe
+--------------------------------------------------------------
+                 (1)          (2)          (3)          (4)   
+--------------------------------------------------------------
+zmanagem~t     0.009                                          
+             (0.076)                                          
+zops                       -0.067                    -0.082   
+                          (0.068)                   (0.073)   
+zpeople                                  0.014        0.042   
+                                       (0.058)      (0.062)   
+--------------------------------------------------------------
+\# Obser~s       271          271          271          271   
+\# Firms         271          271          271          271   
+--------------------------------------------------------------
+Warning: estimated covariance matrix of moment conditions not of full rank.
+         overidentification statistic not reported, and standard errors and
+         model tests should be interpreted with caution.
+Possible causes:
+         number of clusters insufficient to calculate robust covariance matrix
+         singleton dummy variable (dummy with one 1 and N-1 0s or vice versa)
+partial option may address problem.
+Warning: estimated covariance matrix of moment conditions not of full rank.
+         overidentification statistic not reported, and standard errors and
+         model tests should be interpreted with caution.
+Possible causes:
+         number of clusters insufficient to calculate robust covariance matrix
+         singleton dummy variable (dummy with one 1 and N-1 0s or vice versa)
+partial option may address problem.
+Warning: estimated covariance matrix of moment conditions not of full rank.
+         overidentification statistic not reported, and standard errors and
+         model tests should be interpreted with caution.
+Possible causes:
+         number of clusters insufficient to calculate robust covariance matrix
+         singleton dummy variable (dummy with one 1 and N-1 0s or vice versa)
+partial option may address problem.
+Warning: estimated covariance matrix of moment conditions not of full rank.
+         overidentification statistic not reported, and standard errors and
+         model tests should be interpreted with caution.
+Possible causes:
+         number of clusters insufficient to calculate robust covariance matrix
+         singleton dummy variable (dummy with one 1 and N-1 0s or vice versa)
+partial option may address problem.
+
+IV Estimates for 2013: zakm_pe
+--------------------------------------------------------------
+                 (1)          (2)          (3)          (4)   
+--------------------------------------------------------------
+zmanagem~t     0.575***                                       
+             (0.192)                                          
+zops                        0.820**                   0.133   
+                          (0.411)                   (0.609)   
+zpeople                                  0.900**      0.842   
+                                       (0.359)      (0.513)   
+--------------------------------------------------------------
+\# Obser~s       268          268          268          268   
+\# Firms         268          268          268          268   
+--------------------------------------------------------------
+
+Pooled OLS Estimates for 2008 and 2013: zpe_mngr
+--------------------------------------------------------------
+                 (1)          (2)          (3)          (4)   
+--------------------------------------------------------------
+zmanagem~t     0.114***                                       
+             (0.042)                                          
+zops                        0.073**                   0.057   
+                          (0.037)                   (0.041)   
+zpeople                                  0.061        0.039   
+                                       (0.038)      (0.042)   
+--------------------------------------------------------------
+\# Obser~s       554          554          554          554   
+\# Firms         286          286          286          286   
+--------------------------------------------------------------
+
+FE Estimates for 2008 and 2013: zpe_mngr
+--------------------------------------------------------------
+                 (1)          (2)          (3)          (4)   
+--------------------------------------------------------------
+zmanagem~t    -0.045                                          
+             (0.058)                                          
+zops                       -0.010                     0.015   
+                          (0.052)                   (0.053)   
+zpeople                                 -0.067       -0.072   
+                                       (0.047)      (0.048)   
+--------------------------------------------------------------
+\# Obser~s       554          554          554          554   
+\# Firms         286          286          286          286   
+--------------------------------------------------------------
+
+Cross-section OLS Estimates for 2013: zpe_mngr
+--------------------------------------------------------------
+                 (1)          (2)          (3)          (4)   
+--------------------------------------------------------------
+zmanagem~t     0.111                                          
+             (0.068)                                          
+zops                        0.076                     0.069   
+                          (0.065)                   (0.069)   
+zpeople                                  0.043        0.019   
+                                       (0.055)      (0.058)   
+--------------------------------------------------------------
+\# Obser~s       271          271          271          271   
+\# Firms         271          271          271          271   
+--------------------------------------------------------------
+Warning: estimated covariance matrix of moment conditions not of full rank.
+         overidentification statistic not reported, and standard errors and
+         model tests should be interpreted with caution.
+Possible causes:
+         number of clusters insufficient to calculate robust covariance matrix
+         singleton dummy variable (dummy with one 1 and N-1 0s or vice versa)
+partial option may address problem.
+Warning: estimated covariance matrix of moment conditions not of full rank.
+         overidentification statistic not reported, and standard errors and
+         model tests should be interpreted with caution.
+Possible causes:
+         number of clusters insufficient to calculate robust covariance matrix
+         singleton dummy variable (dummy with one 1 and N-1 0s or vice versa)
+partial option may address problem.
+Warning: estimated covariance matrix of moment conditions not of full rank.
+         overidentification statistic not reported, and standard errors and
+         model tests should be interpreted with caution.
+Possible causes:
+         number of clusters insufficient to calculate robust covariance matrix
+         singleton dummy variable (dummy with one 1 and N-1 0s or vice versa)
+partial option may address problem.
+Warning: estimated covariance matrix of moment conditions not of full rank.
+         overidentification statistic not reported, and standard errors and
+         model tests should be interpreted with caution.
+Possible causes:
+         number of clusters insufficient to calculate robust covariance matrix
+         singleton dummy variable (dummy with one 1 and N-1 0s or vice versa)
+partial option may address problem.
+
+IV Estimates for 2013: zpe_mngr
+--------------------------------------------------------------
+                 (1)          (2)          (3)          (4)   
+--------------------------------------------------------------
+zmanagem~t     0.766***                                       
+             (0.210)                                          
+zops                        0.694**                  -0.336   
+                          (0.346)                   (0.687)   
+zpeople                                  1.116***     1.262** 
+                                       (0.409)      (0.584)   
+--------------------------------------------------------------
+\# Obser~s       268          268          268          268   
+\# Firms         268          268          268          268   
+--------------------------------------------------------------
+
+Pooled OLS Estimates for 2008 and 2013: zpe_lab
+--------------------------------------------------------------
+                 (1)          (2)          (3)          (4)   
+--------------------------------------------------------------
+zmanagem~t     0.044                                          
+             (0.048)                                          
+zops                       -0.012                    -0.040   
+                          (0.048)                   (0.055)   
+zpeople                                  0.054        0.070   
+                                       (0.040)      (0.046)   
+--------------------------------------------------------------
+\# Obser~s       554          554          554          554   
+\# Firms         286          286          286          286   
+--------------------------------------------------------------
+
+FE Estimates for 2008 and 2013: zpe_lab
+--------------------------------------------------------------
+                 (1)          (2)          (3)          (4)   
+--------------------------------------------------------------
+zmanagem~t     0.005                                          
+             (0.061)                                          
+zops                       -0.057                    -0.067   
+                          (0.039)                   (0.043)   
+zpeople                                  0.004        0.027   
+                                       (0.043)      (0.046)   
+--------------------------------------------------------------
+\# Obser~s       554          554          554          554   
+\# Firms         286          286          286          286   
+--------------------------------------------------------------
+
+Cross-section OLS Estimates for 2013: zpe_lab
+--------------------------------------------------------------
+                 (1)          (2)          (3)          (4)   
+--------------------------------------------------------------
+zmanagem~t    -0.010                                          
+             (0.073)                                          
+zops                       -0.086                    -0.100   
+                          (0.072)                   (0.079)   
+zpeople                                  0.003        0.037   
+                                       (0.059)      (0.064)   
+--------------------------------------------------------------
+\# Obser~s       271          271          271          271   
+\# Firms         271          271          271          271   
+--------------------------------------------------------------
+Warning: estimated covariance matrix of moment conditions not of full rank.
+         overidentification statistic not reported, and standard errors and
+         model tests should be interpreted with caution.
+Possible causes:
+         number of clusters insufficient to calculate robust covariance matrix
+         singleton dummy variable (dummy with one 1 and N-1 0s or vice versa)
+partial option may address problem.
+Warning: estimated covariance matrix of moment conditions not of full rank.
+         overidentification statistic not reported, and standard errors and
+         model tests should be interpreted with caution.
+Possible causes:
+         number of clusters insufficient to calculate robust covariance matrix
+         singleton dummy variable (dummy with one 1 and N-1 0s or vice versa)
+partial option may address problem.
+Warning: estimated covariance matrix of moment conditions not of full rank.
+         overidentification statistic not reported, and standard errors and
+         model tests should be interpreted with caution.
+Possible causes:
+         number of clusters insufficient to calculate robust covariance matrix
+         singleton dummy variable (dummy with one 1 and N-1 0s or vice versa)
+partial option may address problem.
+Warning: estimated covariance matrix of moment conditions not of full rank.
+         overidentification statistic not reported, and standard errors and
+         model tests should be interpreted with caution.
+Possible causes:
+         number of clusters insufficient to calculate robust covariance matrix
+         singleton dummy variable (dummy with one 1 and N-1 0s or vice versa)
+partial option may address problem.
+
+IV Estimates for 2013: zpe_lab
+--------------------------------------------------------------
+                 (1)          (2)          (3)          (4)   
+--------------------------------------------------------------
+zmanagem~t     0.456**                                        
+             (0.197)                                          
+zops                        0.637*                    0.075   
+                          (0.387)                   (0.587)   
+zpeople                                  0.721**      0.689   
+                                       (0.339)      (0.488)   
+--------------------------------------------------------------
+\# Obser~s       268          268          268          268   
+\# Firms         268          268          268          268   
+--------------------------------------------------------------
+
+. 
+. 
+. 
+. 
+. capture log close

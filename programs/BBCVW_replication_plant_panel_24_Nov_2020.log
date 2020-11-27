@@ -1,0 +1,1031 @@
+------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\BBCVW_replic
+> ation_plant_panel_24_Nov_2020.log
+  log type:  text
+ opened on:  24 Nov 2020, 19:10:16
+
+. 
+. /* install any packages locally */
+. sysdir set PERSONAL "$adobase/ado/personal"
+
+. sysdir set PLUS     "$adobase/ado/plus"
+
+. sysdir set SITE     "$adobase/ado/site"
+
+. 
+. /* See https://www.stata.com/manuals13/pcreturn.pdf#pcreturn */
+. local variant = cond(c(MP),"MP",cond(c(SE),"SE",c(flavor)) )  
+
+. 
+. di "=== SYSTEM DIAGNOSTICS ==="
+=== SYSTEM DIAGNOSTICS ===
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 15.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 03 Feb 2020
+
+. di "Variant:       `variant'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    4
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. di "=========================="
+==========================
+
+. 
+end of do-file
+
+. 
+. pause on
+
+. set more off
+
+. set linesize 120                                                                                                      
+>  
+
+. 
+. /* %*************************************************************************** */
+. use "${inpath}/WMS_plantyear_with_RAIS.dta", clear
+
+. 
+. sum pe_mngr pe_mngr_jole pe_lab
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+     pe_mngr |        964    1.202535     .885077  -.7678218   4.503116
+pe_mngr_jole |        964    1.149713    .8330355  -.6785924   4.392658
+      pe_lab |        964   -.0808202    .5028051  -1.024746    3.73521
+
+. 
+. ***********
+. * Figure 3*
+. ***********
+. 
+. binscatter zmanagement zakm_pe, xtitle("Average worker quality (standardized)") ytitle("Management z-score") ///
+>  yscale(r(-.6 .6)) ylabel(-.6(.2).6) graphregion(color(white)) line(none) mcol(gs3) 
+
+. graph save "${figpath}/BBCVW_fig_3.gph", replace
+(note: file ../output/figures/BBCVW_fig_3.gph not found)
+(file ../output/figures/BBCVW_fig_3.gph saved)
+
+. graph export "${figpath}/BBCVW_fig_3.pdf", as(pdf) replace 
+(file ../output/figures/BBCVW_fig_3.pdf written in PDF format)
+
+. 
+. 
+. ***********
+. * Figure 4*
+. ***********
+. 
+. binscatter zmanagement zakm_pe , controls(lemp) xtitle("Average worker quality (standardized)") ytitle("Management z-s
+> core") ///
+>   yscale(r(-.6 .6)) ylabel(-.6(.2).6) xscale(r(-2 3)) xlabel(-2(1)3) graphregion(color(white)) line(none) mcol(gs3) sa
+> vedata(${figpath}/BBCVW_fig4_data) replace
+(note: file ../output/figures/BBCVW_fig4_data.csv not found)
+(file ../output/figures/BBCVW_fig4_data.csv written containing saved data)
+(note: file ../output/figures/BBCVW_fig4_data.do not found)
+(file ../output/figures/BBCVW_fig4_data.do written containing commands to process saved data)
+
+.   
+. preserve
+
+. clear
+
+. 
+. insheet using ${figpath}/BBCVW_fig4_data.csv
+(2 vars, 20 obs)
+
+. 
+. gen _mgmtGE=.
+(20 missing values generated)
+
+. gen _peGE=.
+(20 missing values generated)
+
+. replace _mgmtGE =0.03 if  _n==1
+(1 real change made)
+
+. replace _mgmtGE =-0.28 if  _n ==2
+(1 real change made)
+
+. replace _mgmtGE =-0.21 if  _n==3
+(1 real change made)
+
+. replace _mgmtGE =-0.09 if  _n==4
+(1 real change made)
+
+. replace _mgmtGE =-0.28 if  _n==5
+(1 real change made)
+
+. replace _mgmtGE =-0.085 if  _n==6
+(1 real change made)
+
+. replace _mgmtGE =0.195 if  _n==7
+(1 real change made)
+
+. replace _mgmtGE =0.03 if  _n==8
+(1 real change made)
+
+. replace _mgmtGE =0.11 if  _n==9
+(1 real change made)
+
+. replace _mgmtGE =-0.28 if  _n==10
+(1 real change made)
+
+. replace _mgmtGE =-0.3 if  _n==11
+(1 real change made)
+
+. replace _mgmtGE =-0.18 if  _n==12
+(1 real change made)
+
+. replace _mgmtGE =-0.21 if  _n==13
+(1 real change made)
+
+. replace _mgmtGE =0.05 if  _n==14
+(1 real change made)
+
+. replace _mgmtGE =-0.05 if  _n==15
+(1 real change made)
+
+. replace _mgmtGE =0.39 if  _n==16
+(1 real change made)
+
+. replace _mgmtGE =0.21 if  _n==17
+(1 real change made)
+
+. replace _mgmtGE =0.18 if  _n==18
+(1 real change made)
+
+. replace _mgmtGE =0.05 if  _n==19
+(1 real change made)
+
+. replace _mgmtGE =0.62 if  _n==20
+(1 real change made)
+
+. 
+. replace _peGE =-1.95 if _n==1
+(1 real change made)
+
+. replace _peGE =-1.1 if _n==2
+(1 real change made)
+
+. replace _peGE =-0.9 if _n==3
+(1 real change made)
+
+. replace _peGE =-0.8 if _n==4
+(1 real change made)
+
+. replace _peGE =-0.7 if _n==5
+(1 real change made)
+
+. replace _peGE =-0.6 if _n==6
+(1 real change made)
+
+. replace _peGE =-0.5 if _n==7
+(1 real change made)
+
+. replace _peGE =-0.4 if _n==8
+(1 real change made)
+
+. replace _peGE =-0.3 if _n==9
+(1 real change made)
+
+. replace _peGE =-0.2 if _n==10
+(1 real change made)
+
+. replace _peGE =-0.1 if _n==11
+(1 real change made)
+
+. replace _peGE =0 if _n==12
+(1 real change made)
+
+. replace _peGE =0.1 if _n==13
+(1 real change made)
+
+. replace _peGE =0.2 if _n==14
+(1 real change made)
+
+. replace _peGE =0.4 if _n==15
+(1 real change made)
+
+. replace _peGE =0.6 if _n==16
+(1 real change made)
+
+. replace _peGE =0.7 if _n==17
+(1 real change made)
+
+. replace _peGE =1.1 if _n==18
+(1 real change made)
+
+. replace _peGE =1.5 if _n==19
+(1 real change made)
+
+. replace _peGE =2.2 if _n==20
+(1 real change made)
+
+. 
+. twoway (scatter _mgmtGE _peGE , msymbol(Th) mcolor(cranberry)) ///
+>         (scatter zmanagement zakm_pe , mcolor(forest_green) ///
+>         ytitle("Management z-score", size(medium)) ylabel(-.6(.2).6, noticks labsize(medium)) ///
+>         xtitle("Average worker quality (standardized)", size(medium)) xlabel(,noticks labsize(medium)) ///
+>         graphregion(${gregion}) plotregion(${pregion}) ///
+>         legend(label(1 "Germany (replication)") label(2 "Brazil") order(2 1) ring(0) pos(10) col(1) region(lcolor(whit
+> e))))
+
+. graph save "${figpath}/BBCVW_fig_4.gph", replace
+(note: file ../output/figures/BBCVW_fig_4.gph not found)
+(file ../output/figures/BBCVW_fig_4.gph saved)
+
+. graph export "${figpath}/BBCVW_fig_4.pdf", as(pdf) replace 
+(file ../output/figures/BBCVW_fig_4.pdf written in PDF format)
+
+. 
+. 
+. restore
+
+. ***********
+. * Figure 7*
+. ***********
+. 
+. 
+. binscatter zmanagement zakm_fe , controls(lemp) xtitle("Average firm FE") ytitle("Management z-score") ///
+>   yscale(r(-.6 .6)) ylabel(-.6(.2).6) xscale(r(-2 3)) xlabel(-2(1)3) graphregion(color(white)) line(none) mcol(gs3) sa
+> vedata(${figpath}/BBCVW_fig7_data) replace
+(note: file ../output/figures/BBCVW_fig7_data.csv not found)
+(file ../output/figures/BBCVW_fig7_data.csv written containing saved data)
+(note: file ../output/figures/BBCVW_fig7_data.do not found)
+(file ../output/figures/BBCVW_fig7_data.do written containing commands to process saved data)
+
+.   
+. preserve
+
+. clear
+
+. 
+. insheet using ${figpath}/BBCVW_fig7_data.csv
+(2 vars, 20 obs)
+
+. 
+. gen _mgmtGE=.
+(20 missing values generated)
+
+. gen _peGE=.
+(20 missing values generated)
+
+. replace _mgmtGE =-.5 if  _n==1
+(1 real change made)
+
+. replace _mgmtGE =-.22 if  _n==2
+(1 real change made)
+
+. replace _mgmtGE =-.12 if  _n==3
+(1 real change made)
+
+. replace _mgmtGE =0 if  _n==4
+(1 real change made)
+
+. replace _mgmtGE =-.22 if  _n==5
+(1 real change made)
+
+. replace _mgmtGE =.35 if  _n==6
+(1 real change made)
+
+. replace _mgmtGE =-.05 if  _n==7
+(1 real change made)
+
+. replace _mgmtGE =-.19 if  _n==8
+(1 real change made)
+
+. replace _mgmtGE =.18 if  _n==9
+(1 real change made)
+
+. replace _mgmtGE =-.395 if  _n==10
+(1 real change made)
+
+. replace _mgmtGE =-.19 if  _n==11
+(1 real change made)
+
+. replace _mgmtGE =-.1 if  _n==12
+(1 real change made)
+
+. replace _mgmtGE =.11 if  _n==13
+(1 real change made)
+
+. replace _mgmtGE =.05 if  _n==14
+(1 real change made)
+
+. replace _mgmtGE =.08 if  _n==15
+(1 real change made)
+
+. replace _mgmtGE =.21 if  _n==16
+(1 real change made)
+
+. replace _mgmtGE =.01 if  _n==17
+(1 real change made)
+
+. replace _mgmtGE =.35 if  _n==18
+(1 real change made)
+
+. replace _mgmtGE =.25 if  _n==19
+(1 real change made)
+
+. replace _mgmtGE =.39 if  _n==20
+(1 real change made)
+
+. 
+. replace _peGE =-2.2 if _n==1
+(1 real change made)
+
+. replace _peGE =-1.2 if _n==2
+(1 real change made)
+
+. replace _peGE =-0.8 if _n==3
+(1 real change made)
+
+. replace _peGE =-0.6 if _n==4
+(1 real change made)
+
+. replace _peGE =-0.5 if _n==5
+(1 real change made)
+
+. replace _peGE =-0.3 if _n==6
+(1 real change made)
+
+. replace _peGE =-0.1 if _n==7
+(1 real change made)
+
+. replace _peGE =-0.05 if _n==8
+(1 real change made)
+
+. replace _peGE =0 if _n==9
+(1 real change made)
+
+. replace _peGE =0.05 if _n==10
+(1 real change made)
+
+. replace _peGE =0.1 if _n==11
+(1 real change made)
+
+. replace _peGE =0.15 if _n==12
+(1 real change made)
+
+. replace _peGE =0.3 if _n==13
+(1 real change made)
+
+. replace _peGE =0.42 if _n==14
+(1 real change made)
+
+. replace _peGE =0.55 if _n==15
+(1 real change made)
+
+. replace _peGE =0.7 if _n==16
+(1 real change made)
+
+. replace _peGE =0.85 if _n==17
+(1 real change made)
+
+. replace _peGE =1.3 if _n==18
+(1 real change made)
+
+. replace _peGE =1.5 if _n==19
+(1 real change made)
+
+. replace _peGE =2 if _n==20
+(1 real change made)
+
+.         
+. twoway (scatter _mgmtGE _peGE , msymbol(Th) mcolor(cranberry)) ///
+>         (scatter zmanagement zakm_fe , mcolor(forest_green) ///
+>         ytitle("Management z-score", size(medium)) ylabel(-.6(.2).4, noticks labsize(medium)) ///
+>         xtitle("Firm FE", size(medium)) xlabel(,noticks labsize(medium)) ///
+>         graphregion(${gregion}) plotregion(${pregion}) ///
+>         legend(label(1 "Germany (replication)") label(2 "Brazil") order(2 1) ring(0) pos(10) col(1) region(lcolor(whit
+> e))))
+
+. graph save "${figpath}/BBCVW_fig_7.gph", replace
+(note: file ../output/figures/BBCVW_fig_7.gph not found)
+(file ../output/figures/BBCVW_fig_7.gph saved)
+
+. graph export "${figpath}/BBCVW_fig_7.pdf", as(pdf) replace 
+(file ../output/figures/BBCVW_fig_7.pdf written in PDF format)
+
+. 
+. 
+. ***********
+. * Table 1 *
+. ***********
+. 
+. restore
+
+. 
+. label define ownl ///
+>   1 "Family owned" /// 
+>   2 "Founder owned" ///
+>   3 "Manager owned" ///
+>   4 "Nonfamily private owned" ///
+>   5 "Institutionally owned" ///
+>   6 "Government owned" 
+
+. 
+. label define compl ///
+>   1 "No competitors" ///
+>   2 "Less than five competitors" ///
+>   3 "Five or more competitors"
+
+. 
+. label values own_cat ownl
+
+. label values compet_cat compl
+
+. 
+. tabulate own_cat, gen(ownerc)
+
+  MGMT: 6 categories of |
+ ownership (from BBCVW) |      Freq.     Percent        Cum.
+------------------------+-----------------------------------
+           Family owned |        292       25.50       25.50
+          Founder owned |        427       37.29       62.79
+          Manager owned |         27        2.36       65.15
+Nonfamily private owned |        327       28.56       93.71
+  Institutionally owned |         69        6.03       99.74
+       Government owned |          3        0.26      100.00
+------------------------+-----------------------------------
+                  Total |      1,145      100.00
+
+. la var ownerc1 "Family owned" 
+
+. la var ownerc2 "Founder owned"
+
+. la var ownerc3 "Manager owned" 
+
+. la var ownerc4 "Nonfamily private owned"
+
+. la var ownerc5 "Institutionally owned"
+
+. la var ownerc6 "Government ownership" 
+
+. 
+. tabulate compet_cat, gen(competc)
+
+MGMT: 3 category number of |
+  competitors (from BBCVW) |      Freq.     Percent        Cum.
+---------------------------+-----------------------------------
+            No competitors |          7        0.61        0.61
+Less than five competitors |        260       22.71       23.32
+  Five or more competitors |        878       76.68      100.00
+---------------------------+-----------------------------------
+                     Total |      1,145      100.00
+
+. la var competc1 "Zero competitors" 
+
+. la var competc2 "Fewer than five competitors"
+
+. la var competc3 "Five or more competitors" 
+
+. 
+. label var firmage "Firm age (years)"
+
+. label var zmanagement "Management score (standardized)"
+
+. label var female_t "\% of female employees (WMS)"
+
+. label var degree_t "\% of employees with college degree (WMS)"
+
+. label var num_workers "Number of workers"
+
+. label var median_wage "Median hourly wage"
+
+. label var female_share "\% of female employees (RAIS)"
+
+. label var coll_share "\% of employees with college degree (RAIS)"
+
+. label var AKM_coverage "AKM coverage (\% empl with worker effects)"
+
+. label var zakm_pe "Average employee quality (AKM worker effects)"
+
+. label var zpe_mngr "Average managerial quality (occupation-based)"
+
+. label var zpe_mngr_jole "Average managerial quality (top quartile)"
+
+. label var zakm_fe "Firm wage premium (AKM employer effect)"
+
+. la var percent_m "\% of managers"
+
+. 
+. tabstat  firmage competc? ownerc? zmanagement female_t degree_t percent_m num_workers median_wage female_share coll_sh
+> are mngr_share ///
+>     AKM_coverage zakm_pe zpe_mngr zpe_mngr_jole zakm_fe if has_akm ==1, ///
+>         statistics(mean median min max  sd n)
+
+   stats |   firmage  competc1  competc2  competc3   ownerc1   ownerc2   ownerc3   ownerc4   ownerc5   ownerc6  zmanag~t
+---------+--------------------------------------------------------------------------------------------------------------
+    mean |  36.87187  .0062241  .2344398  .7593361  .2624481  .3558091  .0217842  .2904564    .06639   .003112  2.98e-10
+     p50 |        34         0         0         1         0         0         0         0         0         0  -.016823
+     min |         1         0         0         0         0         0         0         0         0         0 -2.586231
+     max |       316         1         1         1         1         1         1         1         1         1  3.123489
+      sd |  24.96664  .0786877  .4238681  .4277085  .4401933  .4790063  .1460541  .4542087  .2490919  .0557276         1
+       N |       964       964       964       964       964       964       964       964       964       964       964
+------------------------------------------------------------------------------------------------------------------------
+
+   stats |  female_t  degree_t  percen~m  num_wo~s  median~e  female~e  coll_s~e  mngr_s~e  AKM_co~e   zakm_pe  zpe_mngr
+---------+--------------------------------------------------------------------------------------------------------------
+    mean |  29.84752  13.08314   4.83125  287.1037  12.09482  29.13434  15.52238  8.655618  .7927268  9.58e-10  1.13e-09
+     p50 |      25.2     10.16       3.5       184  9.045064  23.79711  9.056791  6.046512  .8260182 -.2336567 -.0643789
+     min |         0         0         0         1  3.351952         0         0         0  .2389381 -1.756231 -2.226199
+     max |       100       100        30      5072  200.1285       100       100       100         1  6.666216  3.729146
+      sd |  23.64509  13.24295  4.185065  373.8452  11.91184  21.43314   19.0083  10.82496  .1552355         1         1
+       N |       475       964       960       964       964       964       964       964       964       964       964
+------------------------------------------------------------------------------------------------------------------------
+
+   stats |  zpe_mn~e   zakm_fe
+---------+--------------------
+    mean | -5.02e-10  7.59e-10
+     p50 | -.1550106 -.0022815
+     min | -2.194751 -2.340256
+     max |  3.892926  7.412457
+      sd |         1         1
+       N |       964       964
+------------------------------
+
+.  
+. 
+. estpost sum competc? ownerc? firmage zmanagement female_t degree_t percent_m num_workers median_wage female_share coll
+> _share mngr_share ///
+>     AKM_coverage zakm_pe zpe_mngr zpe_mngr_jole zakm_fe if has_akm==1 , d
+
+             |  e(count)   e(sum_w)    e(mean)     e(Var)      e(sd)  e(skewn~)  e(kurto~)     e(sum)     e(min) 
+-------------+---------------------------------------------------------------------------------------------------
+    competc1 |       964        964   .0062241   .0061918   .0786877   12.55679   158.6729          6          0 
+    competc2 |       964        964   .2344398   .1796642   .4238681   1.253682    2.57172        226          0 
+    competc3 |       964        964   .7593361   .1829346   .4277085  -1.213306   2.472112        732          0 
+     ownerc1 |       964        964   .2624481   .1937701   .4401933   1.079867   2.166114        253          0 
+     ownerc2 |       964        964   .3558091    .229447   .4790063   .6023542   1.362831        343          0 
+     ownerc3 |       964        964   .0217842   .0213318   .1460541   6.551872   43.92703         21          0 
+     ownerc4 |       964        964   .2904564   .2063055   .4542087   .9231543   1.852214        280          0 
+     ownerc5 |       964        964     .06639   .0620468   .2490919   3.483333   13.13361         64          0 
+     ownerc6 |       964        964    .003112   .0031056   .0557276   17.84199   319.3365          3          0 
+     firmage |       964        964   36.87187    623.333   24.96664   2.694948   22.05004   35544.48          1 
+ zmanagement |       964        964   2.98e-10          1          1   .1010427   2.840644   2.87e-07  -2.586231 
+    female_t |       475        475   29.84752   559.0904   23.64509   .7709178   2.831791   14177.57          0 
+    degree_t |       964        964   13.08314   175.3757   13.24295   2.224667   9.904143   12612.15          0 
+   percent_m |       960        960    4.83125   17.51477   4.185065   2.064774   9.652155       4638          0 
+ num_workers |       964        964   287.1037   139760.2   373.8452   5.031508   44.55744     276768          1 
+ median_wage |       964        964   12.09482    141.892   11.91184   6.452255   76.53445   11659.41   3.351952 
+female_share |       964        964   29.13434   459.3793   21.43314    .946269   3.387932   28085.51          0 
+  coll_share |       964        964   15.52238   361.3155    19.0083   2.377227   9.056624   14963.57          0 
+  mngr_share |       964        964   8.655618   117.1797   10.82496   5.007458    37.2321   8344.016          0 
+AKM_coverage |       964        964   .7927268   .0240981   .1552355  -.8795637   3.278005   764.1886   .2389381 
+     zakm_pe |       964        964   9.58e-10          1          1   1.826665   7.997974   9.23e-07  -1.756231 
+    zpe_mngr |       964        964   1.13e-09          1          1   .2609497   2.737172   1.09e-06  -2.226199 
+zpe_mngr_j~e |       964        964  -5.02e-10          1          1   .8248375   3.923083  -4.84e-07  -2.194751 
+     zakm_fe |       964        964   7.59e-10          1          1   .8534768   8.494882   7.32e-07  -2.340256 
+
+             |    e(max)      e(p1)      e(p5)     e(p10)     e(p25)     e(p50)     e(p75)     e(p90)     e(p95) 
+-------------+---------------------------------------------------------------------------------------------------
+    competc1 |         1          0          0          0          0          0          0          0          0 
+    competc2 |         1          0          0          0          0          0          0          1          1 
+    competc3 |         1          0          0          0          1          1          1          1          1 
+     ownerc1 |         1          0          0          0          0          0          1          1          1 
+     ownerc2 |         1          0          0          0          0          0          1          1          1 
+     ownerc3 |         1          0          0          0          0          0          0          0          0 
+     ownerc4 |         1          0          0          0          0          0          1          1          1 
+     ownerc5 |         1          0          0          0          0          0          0          0          1 
+     ownerc6 |         1          0          0          0          0          0          0          0          0 
+     firmage |       316          4          9         12         19         34         48         64         78 
+ zmanagement |  3.123489  -2.196123  -1.662695  -1.303257  -.7085685   -.016823   .6860408   1.222623   1.640751 
+    female_t |       100          0         .9       2.88        9.9       25.2      46.58       64.7       79.2 
+    degree_t |       100          0         .4       1.38      4.165      10.16      16.48      28.75       40.6 
+   percent_m |        30          1          1          1          2        3.5          6         10         12 
+ num_workers |      5072          2         18         42         99        184      343.5        565        863 
+ median_wage |  200.1285   3.588773   4.464257   5.082707   6.638494   9.045064   12.99782   19.50607   30.30696 
+female_share |       100          0   4.054054   6.401766   11.84887   23.79711   42.95635   59.32204   70.09346 
+  coll_share |       100          0   .2890173   1.492537   4.047229   9.056791    18.4187   39.63415   57.14286 
+  mngr_share |       100          0   .7509387   1.657459   3.546144   6.046512         10   16.18705   23.80952 
+AKM_coverage |         1   .3513514   .4857143   .5723473   .6955627   .8260182   .9183276   .9615385   .9830508 
+     zakm_pe |  6.666216  -1.428676  -1.106638  -.9441723  -.6283221  -.2336567   .3448928   1.164209     2.1244 
+    zpe_mngr |  3.729146   -1.95157   -1.61475  -1.300853  -.7502028  -.0643789   .6840516   1.368925   1.724739 
+zpe_mngr_j~e |  3.892926  -1.850811  -1.386559  -1.148875  -.6676653  -.1550106   .5439796    1.32603   1.958974 
+     zakm_fe |  7.412457  -2.028653   -1.62284  -1.338622  -.6225926  -.0022815   .5656632   1.244787   1.622194 
+
+             |    e(p99) 
+-------------+-----------
+    competc1 |         0 
+    competc2 |         1 
+    competc3 |         1 
+     ownerc1 |         1 
+     ownerc2 |         1 
+     ownerc3 |         1 
+     ownerc4 |         1 
+     ownerc5 |         1 
+     ownerc6 |         0 
+     firmage |       122 
+ zmanagement |  2.391243 
+    female_t |      89.1 
+    degree_t |      60.8 
+   percent_m |        20 
+ num_workers |      1791 
+ median_wage |  62.65847 
+female_share |  92.22222 
+  coll_share |  99.06542 
+  mngr_share |      62.5 
+AKM_coverage |         1 
+     zakm_pe |  3.584848 
+    zpe_mngr |  2.410869 
+zpe_mngr_j~e |  3.027545 
+     zakm_fe |  2.166582 
+
+. 
+. est store sumstats
+
+. 
+. esttab sumstats, replace ///
+>                 refcat(competc1 "\textbf{Number of competitors}" ///
+>                     ownerc1 "\textbf{Ownership}" ///
+>                         firmage "\textbf{Other WMS variables}" ///
+>                         num_workers "\textbf{RAIS variables}" ///
+>                         AKM_coverage "\textbf{RAIS/AKM variables}" ///
+>                         , nolabel ) ///
+>                 cells("mean(label(\textbf{Mean}) fmt(2)) p50(label(\textbf{Median}) fmt(1)) min(label(\textbf{Min}) fm
+> t(1)) max(label(\textbf{Max}) fmt(1)) sd(label(\textbf{SD}) par) count(label(\textbf{N}) fmt(0))") label nonotes nonum
+> ber noobs 
+
+--------------------------------------------------------------------------------------------------
+                                                                                                  
+                     \textbf{Me~} \textbf{Me~} \textbf{Min} \textbf{Max}  \textbf{SD}   \textbf{N}
+--------------------------------------------------------------------------------------------------
+\textbf{Number of ~}                                                                              
+Zero competitors             0.01          0.0          0.0          1.0       (0.08)          964
+Fewer than five co~s         0.23          0.0          0.0          1.0       (0.42)          964
+Five or more compe~s         0.76          1.0          0.0          1.0       (0.43)          964
+\textbf{Ownership}                                                                                
+Family owned                 0.26          0.0          0.0          1.0       (0.44)          964
+Founder owned                0.36          0.0          0.0          1.0       (0.48)          964
+Manager owned                0.02          0.0          0.0          1.0       (0.15)          964
+Nonfamily private ~d         0.29          0.0          0.0          1.0       (0.45)          964
+Institutionally ow~d         0.07          0.0          0.0          1.0       (0.25)          964
+Government ownership         0.00          0.0          0.0          1.0       (0.06)          964
+\textbf{Other WMS ~}                                                                              
+Firm age (years)            36.87         34.0          1.0        316.0      (24.97)          964
+Management score (~)         0.00         -0.0         -2.6          3.1       (1.00)          964
+\% of female emplo~)        29.85         25.2          0.0        100.0      (23.65)          475
+\% of employees wi~g        13.08         10.2          0.0        100.0      (13.24)          964
+\% of managers               4.83          3.5          0.0         30.0       (4.19)          960
+\textbf{RAIS varia~}                                                                              
+Number of workers          287.10        184.0          1.0       5072.0     (373.85)          964
+Median hourly wage          12.09          9.0          3.4        200.1      (11.91)          964
+\% of female emplo~)        29.13         23.8          0.0        100.0      (21.43)          964
+\% of employees wi~g        15.52          9.1          0.0        100.0      (19.01)          964
+Share of managers ~f         8.66          6.0          0.0        100.0      (10.82)          964
+\textbf{RAIS/AKM v~}                                                                              
+AKM coverage (\% e~e         0.79          0.8          0.2          1.0       (0.16)          964
+Average employee q~o         0.00         -0.2         -1.8          6.7       (1.00)          964
+Average managerial~u         0.00         -0.1         -2.2          3.7       (1.00)          964
+Average managerial~         -0.00         -0.2         -2.2          3.9       (1.00)          964
+Firm wage premium ~          0.00         -0.0         -2.3          7.4       (1.00)          964
+--------------------------------------------------------------------------------------------------
+
+. 
+. esttab sumstats using ${tabpath}/BBCVW_sumstats.tex, booktabs  replace ///
+>                 refcat(competc1 "\textbf{Number of competitors}" ///
+>                     ownerc1 "\textbf{Ownership}" ///
+>                         firmage "\textbf{Other WMS variables}" ///
+>                         num_workers "\textbf{RAIS variables}" ///
+>                         AKM_coverage "\textbf{RAIS/AKM variables}" ///
+>                         , nolabel ) ///
+>                 cells("mean(label(\textbf{Mean}) fmt(2)) p50(label(\textbf{Median}) fmt(1)) min(label(\textbf{Min}) fm
+> t(1)) max (label(\textbf{Max}) fmt(1)) sd(label(\textbf{SD}) par) count(label(\textbf{N}) fmt(0))") label nonotes nonu
+> mber noobs 
+(note: file ../output/tables/BBCVW_sumstats.tex not found)
+(output written to ../output/tables/BBCVW_sumstats.tex)
+
+. 
+. drop competc? ownerc?
+
+. 
+. 
+. 
+. 
+. 
+. 
+. ***********
+. * Table 2 *
+. ***********
+. la var lemp "Ln of firm employment (WMS)"
+
+. 
+. global ctrl_jole lemp i.region i.year i.own_cat lfirmage female_share i.compet_cat mis_competition c.AKM_coverage##c.A
+> KM_coverage##c.AKM_coverage
+
+. replace degree_t = degree_t/100
+(1,097 real changes made)
+
+. 
+. qui eststo jole1: areg zmanagement                       ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+. qui eststo jole2: areg zmanagement zakm_pe                       ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+. qui eststo jole3: areg zmanagement zpe_mngr_jole         ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+. qui eststo jole4: areg zmanagement zakm_pe      zpe_mngr_jole            ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(
+> sic2)
+
+. qui eststo jole5: areg zmanagement zakm_pe zpe_mngr_jole degree_t ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+. 
+. esttab jole2 jole3 jole4 jole5 using "${tabpath}/BBCVW_tab2_rep.tex", booktabs label replace ///
+>         keep(zakm_pe    zpe_mngr_jole lemp degree_t) ///
+>         order(zakm_pe   zpe_mngr_jole lemp degree_t ) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         scalars("N_clust Firms") ///
+>         mgroups("Management z-score", pattern(1) prefix(\multicolumn{@span}{c}{) suffix(}) span)
+(note: file ../output/tables/BBCVW_tab2_rep.tex not found)
+(output written to ../output/tables/BBCVW_tab2_rep.tex)
+
+. 
+. qui eststo jole1b: areg zmanagement                       ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+. qui eststo jole2b: areg zmanagement zakm_pe                       ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+. qui eststo jole3b: areg zmanagement zpe_mngr_jole         ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+. qui eststo jole4b: areg zmanagement zpe_lab_jole        zpe_mngr_jole     ${ctrl_jole} if has_akm==1, cluster(cnpj) ab
+> (sic2)
+
+. qui eststo jole5b: areg zmanagement zpe_lab_jole   zpe_mngr_jole degree_t ${ctrl_jole} if has_akm==1, cluster(cnpj) ab
+> (sic2)
+
+. 
+. esttab jole2b jole3 jole4b jole5b using "${tabpath}/BBCVW_tab2_rep2.tex", booktabs label replace ///
+>         keep(zakm_pe zpe_mngr_jole zpe_lab_jole lemp degree_t ) ///
+>         order(zakm_pe zpe_mngr_jole zpe_lab_jole lemp degree_t ) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         scalars("N_clust Firms") ///
+>         mgroups("Management z-score", pattern(1) prefix(\multicolumn{@span}{c}{) suffix(}) span)
+(note: file ../output/tables/BBCVW_tab2_rep2.tex not found)
+(output written to ../output/tables/BBCVW_tab2_rep2.tex)
+
+. 
+. qui eststo jole1_e: areg zmanagement                       ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+. qui eststo jole2_e: areg zmanagement zakm_pe               ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+. qui eststo jole3_e: areg zmanagement      zpe_mngr         ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+. qui eststo jole4_e: areg zmanagement zakm_pe  zpe_mngr     ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+. qui eststo jole5_e: areg zmanagement zakm_pe  zpe_mngr degree_t ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+. 
+. esttab jole4_e jole5_e using "${tabpath}/BBCVW_tab2_ext1.tex", booktabs label replace ///
+>         keep(zakm_pe zpe_mngr lemp degree_t ) ///
+>         order(zakm_pe zpe_mngr lemp degree_t ) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         scalars("N_clust Firms") ///
+>         mgroups("Management z-score", pattern(1) prefix(\multicolumn{@span}{c}{) suffix(}) span)
+(note: file ../output/tables/BBCVW_tab2_ext1.tex not found)
+(output written to ../output/tables/BBCVW_tab2_ext1.tex)
+
+. 
+. qui eststo jole1_e2: areg zmanagement                      ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+. qui eststo jole2_e2: areg zmanagement zpe_lab              ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+. qui eststo jole3_e2: areg zmanagement     zpe_mngr         ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+. qui eststo jole4_e2: areg zmanagement zpe_lab  zpe_mngr    ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+. qui eststo jole5_e2: areg zmanagement zpe_lab  zpe_mngr degree_t ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+. 
+. esttab jole2_e2 jole3_e2 jole4_e2 jole5_e2 using "${tabpath}/BBCVW_tab2_ext2.tex", booktabs label replace ///
+>         keep(zpe_lab zpe_mngr lemp degree_t ) ///
+>         order(zpe_lab zpe_mngr lemp degree_t ) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         scalars("N_clust Firms") ///
+>         mgroups("Management z-score", pattern(1) prefix(\multicolumn{@span}{c}{) suffix(}) span)
+(note: file ../output/tables/BBCVW_tab2_ext2.tex not found)
+(output written to ../output/tables/BBCVW_tab2_ext2.tex)
+
+. 
+. replace degree_t = degree_t*100
+(1,097 real changes made)
+
+. 
+. /*
+> DISPLAY IN STATA LOG
+> */
+. esttab jole2 jole3 jole4 jole5 , label replace ///
+>         keep(zakm_pe    zpe_mngr_jole lemp degree_t) ///
+>         order(zakm_pe   zpe_mngr_jole lemp degree_t ) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         scalars("N_clust Firms")
+
+--------------------------------------------------------------------
+                       (1)          (2)          (3)          (4)   
+--------------------------------------------------------------------
+Average employ~o     0.141***                 -0.075       -0.092   
+                   (0.037)                   (0.078)      (0.074)   
+Average manage~                   0.190***     0.257***     0.234** 
+                                (0.035)      (0.076)      (0.072)   
+Ln of firm emp~)     0.374***     0.363***     0.362***     0.349***
+                   (0.032)      (0.031)      (0.031)      (0.030)   
+\% of employee~g                                            1.367***
+                                                          (0.278)   
+--------------------------------------------------------------------
+Observations           964          964          964          964   
+Firms                  696          696          696          696   
+--------------------------------------------------------------------
+
+. 
+. 
+. esttab jole1b jole2b jole3 jole4b jole5b , label replace ///
+>         keep(zakm_pe zpe_mngr_jole zpe_lab_jole lemp degree_t ) ///
+>         order(zakm_pe zpe_mngr_jole zpe_lab_jole lemp degree_t ) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         scalars("N_clust Firms") 
+
+---------------------------------------------------------------------------------
+                       (1)          (2)          (3)          (4)          (5)   
+---------------------------------------------------------------------------------
+Average employ~o                  0.141***                                       
+                                (0.037)                                          
+Average manage~                                0.190***     0.235***     0.205***
+                                             (0.035)      (0.053)      (0.051)   
+Mean non-manag~                                            -0.059       -0.070   
+                                                          (0.053)      (0.051)   
+Ln of firm emp~)     0.393***     0.374***     0.363***     0.362***     0.349***
+                   (0.031)      (0.032)      (0.031)      (0.031)      (0.030)   
+\% of employee~g                                                         1.366***
+                                                                       (0.278)   
+---------------------------------------------------------------------------------
+Observations           964          964          964          964          964   
+Firms                  696          696          696          696          696   
+---------------------------------------------------------------------------------
+
+. 
+. esttab jole1_e jole2_e jole3_e jole4_e jole5_e ,  label replace ///
+>         keep(zakm_pe zpe_mngr lemp degree_t ) ///
+>         order(zakm_pe zpe_mngr lemp degree_t ) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         scalars("N_clust Firms") 
+
+---------------------------------------------------------------------------------
+                       (1)          (2)          (3)          (4)          (5)   
+---------------------------------------------------------------------------------
+Average employ~o                  0.141***                  0.115**      0.082   
+                                (0.037)                   (0.044)      (0.042)   
+Average manage~u                               0.108**      0.047        0.039   
+                                             (0.035)      (0.042)      (0.040)   
+Ln of firm emp~)     0.393***     0.374***     0.372***     0.368***     0.355***
+                   (0.031)      (0.032)      (0.032)      (0.032)      (0.031)   
+\% of employee~g                                                         1.401***
+                                                                       (0.281)   
+---------------------------------------------------------------------------------
+Observations           964          964          964          964          964   
+Firms                  696          696          696          696          696   
+---------------------------------------------------------------------------------
+
+. 
+. 
+. esttab jole2_e2 jole3_e2 jole4_e2 jole5_e2 ,  label replace ///
+>         keep(zpe_lab zpe_mngr lemp degree_t ) ///
+>         order(zpe_lab zpe_mngr lemp degree_t ) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         scalars("N_clust Firms") 
+
+--------------------------------------------------------------------
+                       (1)          (2)          (3)          (4)   
+--------------------------------------------------------------------
+Mean non-..-ba~d     0.128***                  0.099*       0.070   
+                   (0.035)                   (0.039)      (0.038)   
+Average manage~u                  0.108**      0.063        0.050   
+                                (0.035)      (0.039)      (0.038)   
+Ln of firm emp~)     0.378***     0.372***     0.369***     0.355***
+                   (0.032)      (0.032)      (0.032)      (0.031)   
+\% of employee~g                                            1.411***
+                                                          (0.281)   
+--------------------------------------------------------------------
+Observations           964          964          964          964   
+Firms                  696          696          696          696   
+--------------------------------------------------------------------
+
+. 
+. 
+.         
+. /**********     
+> * TABLE 8 *
+> ***********/    
+. la var zmanagement "z-management"
+
+. 
+.  qui eststo jole8_e1: areg w9010 zmanagement            if has_akm==1, cluster(cnpj) ab(sic2)
+
+.  qui eststo jole8_e2: areg w9010 zmanagement  ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+.  qui eststo jole8_e3: areg cv_w zmanagement             if has_akm==1, cluster(cnpj) ab(sic2)
+
+.  qui eststo jole8_e4: areg cv_w zmanagement  ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+.  qui eststo jole8_e5: areg pe9010 zmanagement                   if has_akm==1, cluster(cnpj) ab(sic2)
+
+.  qui eststo jole8_e6: areg pe9010 zmanagement  ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+.  qui eststo jole8_e7: areg cv_pe zmanagement            if has_akm==1, cluster(cnpj) ab(sic2)
+
+.  qui eststo jole8_e8: areg cv_pe zmanagement  ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+.  
+.  esttab jole8* using "${tabpath}/BBCVW_tab8_rep_cv.tex", booktabs label replace ///
+>         keep(zmanagement) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         scalars("N_clust Firms") ///
+>         indicate("General Controls = lemp" , labels("\cmark" "")) ///
+>         mgroups("\specialcell{90-10 \\ Log Wages}" ///
+>         "\specialcell{Coefficient of \\ Variation in \\ Log Wages}" ///
+>         "\specialcell{90-10 \\ Abilty}" ///
+>         "\specialcell{Coefficient of \\ Variation in \\ Ability}", ///
+>         pattern(1 0 1 0 1 0 1 0) prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@span}))
+(note: file ../output/tables/BBCVW_tab8_rep_cv.tex not found)
+(output written to ../output/tables/BBCVW_tab8_rep_cv.tex)
+
+. 
+.  esttab jole8* , label replace ///
+>         keep(zmanagement) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         scalars("N_clust Firms") indicate("General Controls = lemp") 
+
+------------------------------------------------------------------------------------------------------------------------
+                       (1)          (2)          (3)          (4)          (5)          (6)          (7)          (8)   
+------------------------------------------------------------------------------------------------------------------------
+z-management         0.143***     0.096***     0.008***     0.004        0.175***     0.106***     3.647        5.428   
+                   (0.016)      (0.016)      (0.002)      (0.002)      (0.025)      (0.024)      (4.332)      (6.079)   
+General Controls        No          Yes           No          Yes           No          Yes           No          Yes   
+------------------------------------------------------------------------------------------------------------------------
+Observations           964          964          964          964          964          964          964          964   
+Firms                  696          696          696          696          696          696          696          696   
+------------------------------------------------------------------------------------------------------------------------
+
+. 
+.  qui eststo jole8_e3: areg w_sd zmanagement             if has_akm==1, cluster(cnpj) ab(sic2)
+
+.  qui eststo jole8_e4: areg w_sd zmanagement  ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+.  qui eststo jole8_e7: areg pe_sd zmanagement            if has_akm==1, cluster(cnpj) ab(sic2)
+
+.  qui eststo jole8_e8: areg pe_sd zmanagement  ${ctrl_jole} if has_akm==1, cluster(cnpj) ab(sic2)
+
+. 
+.  esttab jole8* using "${tabpath}/BBCVW_tab8_rep_sd.tex", booktabs label replace ///
+>         keep(zmanagement) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         scalars("N_clust Firms") ///
+>         indicate("General Controls = lemp" , labels("\cmark" "")) ///
+>         mgroups("\specialcell{90-10 \\ Log Wages}" ///
+>         "\specialcell{Standard\\ Deviation in \\ Log Wages}" ///
+>         "\specialcell{90-10 \\ Abilty}" ///
+>         "\specialcellStandard \\ Deviation  in \\ Ability}", ///
+>         pattern(1 0 1 0 1 0 1 0) prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@span}))
+(note: file ../output/tables/BBCVW_tab8_rep_sd.tex not found)
+(output written to ../output/tables/BBCVW_tab8_rep_sd.tex)
+
+. 
+.  esttab jole8* , label replace ///
+>         keep(zmanagement) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         scalars("N_clust Firms") indicate("General Controls = lemp") 
+
+------------------------------------------------------------------------------------------------------------------------
+                       (1)          (2)          (3)          (4)          (5)          (6)          (7)          (8)   
+------------------------------------------------------------------------------------------------------------------------
+z-management         0.143***     0.096***     0.053***     0.030***     0.175***     0.106***     0.071***     0.036***
+                   (0.016)      (0.016)      (0.006)      (0.006)      (0.025)      (0.024)      (0.011)      (0.009)   
+General Controls        No          Yes           No          Yes           No          Yes           No          Yes   
+------------------------------------------------------------------------------------------------------------------------
+Observations           964          964          964          964          964          964          964          964   
+Firms                  696          696          696          696          696          696          696          696   
+------------------------------------------------------------------------------------------------------------------------
+
+. 
+. capture log close

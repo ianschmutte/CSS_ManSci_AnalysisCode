@@ -1,0 +1,383 @@
+------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\CSS_predict_
+> retained_worker_quality_24_Nov_2020.log
+  log type:  text
+ opened on:  24 Nov 2020, 19:18:30
+
+. 
+. /* install any packages locally */
+. sysdir set PERSONAL "$adobase/ado/personal"
+
+. sysdir set PLUS     "$adobase/ado/plus"
+
+. sysdir set SITE     "$adobase/ado/site"
+
+. 
+. /* See https://www.stata.com/manuals13/pcreturn.pdf#pcreturn */
+. local variant = cond(c(MP),"MP",cond(c(SE),"SE",c(flavor)) )  
+
+. 
+. di "=== SYSTEM DIAGNOSTICS ==="
+=== SYSTEM DIAGNOSTICS ===
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 15.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 03 Feb 2020
+
+. di "Variant:       `variant'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    4
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. di "=========================="
+==========================
+
+. 
+end of do-file
+
+. 
+. pause on
+
+. set more off
+
+. set linesize 120                                                                                                      
+>  
+
+. 
+. /* %*************************************************************************** */
+. use "${inpath}/WMS_plantyear_with_RAIS.dta", clear
+
+. 
+. /*rename for legacy purposes*/
+. rename zoperations zops
+
+. 
+. /*plant-level regression to extract variation predicted by ops and residual variation*/
+. preserve
+
+. 
+. collapse zmanagement zops zpeople, by(cnpj)
+
+. qui reg zops zmanagement
+
+. predict zm_ops_signal, xb
+(50 missing values generated)
+
+. predict zm_ops_resid, resid
+(50 missing values generated)
+
+. qui reg zpeople zmanagement 
+
+. predict zm_peop_signal, xb
+(50 missing values generated)
+
+. predict zm_peop_resid, resid
+(50 missing values generated)
+
+. tempfile zm_ops_data
+
+. save `zm_ops_data', replace
+(note: file C:\Users\schmutte\AppData\Local\Temp\ST_3ddc_000002.tmp not found)
+file C:\Users\schmutte\AppData\Local\Temp\ST_3ddc_000002.tmp saved
+
+. 
+. restore
+
+. 
+. merge m:1 cnpj using "`zm_ops_data'"
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             0
+    matched                             1,145  (_merge==3)
+    -----------------------------------------
+
+. drop _merge
+
+. sum zm_ops_signal zm_ops_resid zm_peop_signal zm_peop_resid
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+zm_ops_sig~l |        982   -.0110626    .6994608  -1.949474   2.285237
+zm_ops_resid |        982    .0110856    .5860882    -2.1434   1.724351
+zm_peop_si~l |        982      .00469    .7994914  -2.210935   2.629386
+zm_peop_re~d |        982    .0011043    .4518921  -1.529783   1.435692
+
+. egen z_zm_ops_signal = std(zm_ops_signal)
+(163 missing values generated)
+
+. egen z_zm_ops_resid = std(zm_ops_resid)
+(163 missing values generated)
+
+. egen z_zm_peop_signal = std(zm_peop_signal)
+(163 missing values generated)
+
+. egen z_zm_peop_resid = std(zm_peop_resid)
+(163 missing values generated)
+
+. /******************************************************************/
+. 
+. global ctrl_jole lemp i.region i.year i.own_cat lfirmage female_share i.compet_cat mis_competition c.AKM_coverage##c.A
+> KM_coverage##c.AKM_coverage
+
+. 
+. gen degree_share = degree_t/100
+
+. 
+. gen samp = .
+(1,145 missing values generated)
+
+. 
+. la var zmanagement "z-management"
+
+. la var zops        "z-operations"
+
+. la var zpeople     "z-people"
+
+. la var z_zm_ops_signal "z-operations (signal)"
+
+. la var z_zm_ops_resid "z-operations (residual)"
+
+. la var z_zm_peop_signal "z-people (signal)"
+
+. la var z_zm_peop_resid "z-people (residual)"
+
+. 
+. foreach depvar in zakm_pe zpe_mngr zpe_lab{
+  2.     /*get common sample*/
+.     qui reg `depvar' z_zm_ops_signal z_zm_ops_resid ${ctrl_jole} degree_share
+  3.     replace samp = e(sample)
+  4. 
+.     /* qui eststo m2: reg zakm_pe formal i.year if samp==1, cluster(cnpj) */
+.     qui eststo m1: areg  `depvar' zmanagement i.year if samp==1, absorb(sic2) cluster(cnpj)
+  5.     qui eststo m2: areg  `depvar' zmanagement ${ctrl_jole}  if samp==1, absorb(sic2) cluster(cnpj)
+  6.     qui eststo m3: areg  `depvar' zmanagement ${ctrl_jole} degree_share if samp==1, absorb(sic2) cluster(cnpj)
+  7.     qui eststo m4: areg  `depvar' zpeople ${ctrl_jole} degree_share if samp==1, absorb(sic2) cluster(cnpj)
+  8.     qui eststo m5: areg  `depvar' zops ${ctrl_jole} degree_share if samp==1, absorb(sic2) cluster(cnpj)
+  9.     qui eststo m6: areg  `depvar' zops zpeople ${ctrl_jole} degree_share,  absorb(sic2) cluster(cnpj)
+ 10.     qui eststo m7: areg  `depvar' z_zm_ops_signal z_zm_ops_resid ${ctrl_jole} degree_share,  absorb(sic2) cluster(c
+> npj)
+ 11.     qui eststo m8: areg  `depvar' z_zm_peop_signal z_zm_peop_resid ${ctrl_jole} degree_share,  absorb(sic2) cluster
+> (cnpj)
+ 12. 
+. if "`depvar'" == "zakm_pe" {
+ 13.         local mt "Outcome variable: Worker FE"
+ 14.         di "`mt'"
+ 15.         }
+ 16. else if "`depvar'" == "zpe_mngr" {
+ 17.         local mt "Outcome variable: Manager FE"
+ 18.         di "`mt'"
+ 19.         }
+ 20. else if "`depvar'" == "zpe_lab" {
+ 21.         local mt "Outcome variable: Production worker FE"
+ 22.         di "`mt'"
+ 23.         }
+ 24. 
+.     esttab m1 m2 m3 m5 m4 m6, ///
+>         keep(zmanagement zops zpeople) ///      
+>         order(zmanagement zops zpeople) ///
+>         compress collabels(none) nodepvars nogap nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>         stats(N N_clust , fmt(0 0) ///
+>         labels(`"\# Observations"' `"\# Firms"'))       ///
+>         starlevels( * 0.10 ** 0.05 *** 0.01) ///
+>         indicate("Year controls = _cons" "Full controls = lemp" "College share = degree_share"  , labels("\cmark" ""))
+>  ///
+>         mgroups("`mt'", pattern(1 0 0 0 0 0) prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@spa
+> n}))
+ 25. 
+. 
+.     esttab m1 m2 m3 m5 m4 m6 using "${tabpath}/CSS_pred_`depvar'_1.tex", booktabs label replace ///
+>         keep(zmanagement zops zpeople) ///      
+>         order(zmanagement zops zpeople) ///
+>         compress collabels(none) nodepvars nogap nomtitle  ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>          stats(N N_clust , fmt(0 0) ///
+>         labels(`"\# Observations"' `"\# Firms"'))       ///
+>         starlevels( * 0.10 ** 0.05 *** 0.01) ///
+>         indicate("Year controls = _cons" "Full controls = lemp" "College share = degree_share"  , labels("\cmark" ""))
+>  ///
+>         mgroups("`mt'", pattern(1 0 0 0 0 0) prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@spa
+> n}))
+ 26. 
+. 
+.     esttab m7 m8, ///
+>         keep(z_zm_ops_signal z_zm_ops_resid z_zm_peop_signal z_zm_peop_resid) ///       
+>         order(z_zm_ops_signal z_zm_ops_resid z_zm_peop_signal z_zm_peop_resid) ///
+>         compress collabels(none) nodepvars nogap  nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>          stats(N N_clust , fmt(0 0) ///
+>         labels(`"\# Observations"' `"\# Firms"'))       ///
+>         starlevels( * 0.10 ** 0.05 *** 0.01) ///
+>         indicate("Year controls = _cons" "Full controls = lemp" "College share = degree_share"  , labels("\cmark" ""))
+>  ///
+>         mgroups("`mt'", pattern(1) prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@span}))
+ 27. 
+. 
+.     esttab m7 m8 using "${tabpath}/CSS_pred_`depvar'_2.tex", booktabs label replace ///
+>         keep(z_zm_ops_signal z_zm_ops_resid z_zm_peop_signal z_zm_peop_resid) ///       
+>         order(z_zm_ops_signal z_zm_ops_resid z_zm_peop_signal z_zm_peop_resid) ///
+>         compress collabels(none) nodepvars nogap  nomtitle ///
+>         cells(b(star fmt(3)) se(par fmt(3))) ///
+>          stats(N N_clust , fmt(0 0) ///
+>         labels(`"\# Observations"' `"\# Firms"'))       ///
+>         starlevels( * 0.10 ** 0.05 *** 0.01) ///
+>         indicate("Year controls = _cons" "Full controls = lemp" "College share = degree_share"  , labels("\cmark" ""))
+>  ///
+>         mgroups("`mt'", pattern(1) prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@span}))
+ 28. 
+. 
+. }
+(1,145 real changes made)
+Outcome variable: Worker FE
+
+----------------------------------------------------------------------------------------
+           \multicolumn{6}{c}{Outcome variable: Worker FE}                              \cmidrule(lr){2-7}
+                 (1)          (2)          (3)          (4)          (5)          (6)   
+----------------------------------------------------------------------------------------
+zmanagem~t     0.218***     0.127***     0.094***                                       
+             (0.039)      (0.034)      (0.034)                                          
+zops                                                  0.067**                   0.043   
+                                                    (0.031)                   (0.034)   
+zpeople                                                            0.074**      0.056*  
+                                                                 (0.030)      (0.033)   
+Year con~s    \cmark       \cmark       \cmark       \cmark       \cmark       \cmark   
+Full con~s                 \cmark       \cmark       \cmark       \cmark       \cmark   
+College ~e                              \cmark       \cmark       \cmark       \cmark   
+----------------------------------------------------------------------------------------
+\# Obser~s       964          964          964          964          964          964   
+\# Firms         696          696          696          696          696          696   
+----------------------------------------------------------------------------------------
+(note: file ../output/tables/CSS_pred_zakm_pe_1.tex not found)
+(output written to ../output/tables/CSS_pred_zakm_pe_1.tex)
+
+------------------------------------
+           \multicolumn{2}{c}{Outcome variable: Worke~E}\cmidrule(lr){2-3}
+                 (1)          (2)   
+------------------------------------
+z_zm_ops~l     0.126***             
+             (0.034)                
+z_zm_ops~d     0.038                
+             (0.034)                
+z_zm_peo~l                  0.125***
+                          (0.034)   
+z_zm_peo~d                  0.002   
+                          (0.030)   
+Year con~s    \cmark       \cmark   
+Full con~s    \cmark       \cmark   
+College ~e    \cmark       \cmark   
+------------------------------------
+\# Obser~s       964          964   
+\# Firms         696          696   
+------------------------------------
+(note: file ../output/tables/CSS_pred_zakm_pe_2.tex not found)
+(output written to ../output/tables/CSS_pred_zakm_pe_2.tex)
+(0 real changes made)
+Outcome variable: Manager FE
+
+----------------------------------------------------------------------------------------
+           \multicolumn{6}{c}{Outcome variable: Manager FE}                             \cmidrule(lr){2-7}
+                 (1)          (2)          (3)          (4)          (5)          (6)   
+----------------------------------------------------------------------------------------
+zmanagem~t     0.209***     0.099***     0.078**                                        
+             (0.032)      (0.032)      (0.032)                                          
+zops                                                  0.074**                   0.076** 
+                                                    (0.029)                   (0.032)   
+zpeople                                                            0.026       -0.006   
+                                                                 (0.029)      (0.032)   
+Year con~s    \cmark       \cmark       \cmark       \cmark       \cmark       \cmark   
+Full con~s                 \cmark       \cmark       \cmark       \cmark       \cmark   
+College ~e                              \cmark       \cmark       \cmark       \cmark   
+----------------------------------------------------------------------------------------
+\# Obser~s       964          964          964          964          964          964   
+\# Firms         696          696          696          696          696          696   
+----------------------------------------------------------------------------------------
+(note: file ../output/tables/CSS_pred_zpe_mngr_1.tex not found)
+(output written to ../output/tables/CSS_pred_zpe_mngr_1.tex)
+
+------------------------------------
+           \multicolumn{2}{c}{Outcome variable: Manag~E}\cmidrule(lr){2-3}
+                 (1)          (2)   
+------------------------------------
+z_zm_ops~l     0.105***             
+             (0.035)                
+z_zm_ops~d     0.039                
+             (0.030)                
+z_zm_peo~l                  0.108***
+                          (0.035)   
+z_zm_peo~d                 -0.051*  
+                          (0.030)   
+Year con~s    \cmark       \cmark   
+Full con~s    \cmark       \cmark   
+College ~e    \cmark       \cmark   
+------------------------------------
+\# Obser~s       964          964   
+\# Firms         696          696   
+------------------------------------
+(note: file ../output/tables/CSS_pred_zpe_mngr_2.tex not found)
+(output written to ../output/tables/CSS_pred_zpe_mngr_2.tex)
+(0 real changes made)
+Outcome variable: Production worker FE
+
+----------------------------------------------------------------------------------------
+           \multicolumn{6}{c}{Outcome variable: Production worker FE}                   \cmidrule(lr){2-7}
+                 (1)          (2)          (3)          (4)          (5)          (6)   
+----------------------------------------------------------------------------------------
+zmanagem~t     0.196***     0.117***     0.087**                                        
+             (0.039)      (0.035)      (0.034)                                          
+zops                                                  0.063**                   0.040   
+                                                    (0.031)                   (0.035)   
+zpeople                                                            0.071**      0.054   
+                                                                 (0.029)      (0.034)   
+Year con~s    \cmark       \cmark       \cmark       \cmark       \cmark       \cmark   
+Full con~s                 \cmark       \cmark       \cmark       \cmark       \cmark   
+College ~e                              \cmark       \cmark       \cmark       \cmark   
+----------------------------------------------------------------------------------------
+\# Obser~s       964          964          964          964          964          964   
+\# Firms         696          696          696          696          696          696   
+----------------------------------------------------------------------------------------
+(note: file ../output/tables/CSS_pred_zpe_lab_1.tex not found)
+(output written to ../output/tables/CSS_pred_zpe_lab_1.tex)
+
+------------------------------------
+           \multicolumn{2}{c}{Outcome variable: Produ~r}\cmidrule(lr){2-3}
+                 (1)          (2)   
+------------------------------------
+z_zm_ops~l     0.112***             
+             (0.035)                
+z_zm_ops~d     0.036                
+             (0.036)                
+z_zm_peo~l                  0.111***
+                          (0.035)   
+z_zm_peo~d                  0.005   
+                          (0.029)   
+Year con~s    \cmark       \cmark   
+Full con~s    \cmark       \cmark   
+College ~e    \cmark       \cmark   
+------------------------------------
+\# Obser~s       964          964   
+\# Firms         696          696   
+------------------------------------
+(note: file ../output/tables/CSS_pred_zpe_lab_2.tex not found)
+(output written to ../output/tables/CSS_pred_zpe_lab_2.tex)
+
+. 
+. 
+. 
+. log close
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\CSS_predict_
+> retained_worker_quality_24_Nov_2020.log
+  log type:  text
+ closed on:  24 Nov 2020, 19:18:33
+------------------------------------------------------------------------------------------------------------------------

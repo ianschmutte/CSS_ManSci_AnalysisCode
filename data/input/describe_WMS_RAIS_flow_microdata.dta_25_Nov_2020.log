@@ -1,0 +1,169 @@
+------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\../data/inpu
+> t/describe_WMS_RAIS_flow_microdata.dta_25_Nov_2020.log
+  log type:  text
+ opened on:  25 Nov 2020, 08:26:43
+file ../data/input/WMS_RAIS_flow_microdata.dta.dta not found
+r(601);
+
+end of do-file
+
+r(601);
+
+. dir
+  <dir>  11/25/20  8:08  .                 
+  <dir>  11/25/20  8:08  ..                
+  <dir>  11/24/20 19:09  ado               
+   1.0k  11/24/20 13:07  appendix_manager_definitions.do
+   5.4k  11/24/20 19:19  appendix_manager_definitions_24_Nov_2020.log
+  14.5k  11/24/20 13:08  appendix_plant_panel.do
+  50.8k  11/24/20 19:20  appendix_plant_panel_24_Nov_2020.log
+   8.5k  11/24/20 13:08  BBCVW_replication_ability_dist.do
+  12.0k  11/24/20 19:10  BBCVW_replication_ability_dist_24_Nov_2020.log
+   4.0k  11/24/20 13:08  BBCVW_replication_flows.do
+   9.0k  11/24/20 19:10  BBCVW_replication_flows_24_Nov_2020.log
+  16.5k  11/24/20 18:14  BBCVW_replication_plant_panel.do
+  44.4k  11/24/20 19:10  BBCVW_replication_plant_panel_24_Nov_2020.log
+   1.1k  11/25/20  8:08  config.do         
+   1.8k  11/24/20 18:21  CSS_ability_dist.do
+   7.6k  11/24/20 19:10  CSS_ability_dist_24_Nov_2020.log
+   1.9k  11/24/20 13:08  CSS_analysis_firing.do
+   3.9k  11/24/20 19:16  CSS_analysis_firing_24_Nov_2020.log
+   6.3k  11/24/20 13:08  CSS_analysis_firing_regression.do
+  39.6k  11/24/20 19:15  CSS_analysis_firing_regression_24_Nov_2020.log
+   7.1k  11/24/20 13:08  CSS_analysis_hiring.do
+  17.1k  11/24/20 19:17  CSS_analysis_hiring_24_Nov_2020.log
+   7.9k  11/24/20 18:41  CSS_analysis_hiring_regressions.do
+  23.5k  11/24/20 19:17  CSS_analysis_hiring_regressions_24_Nov_2020.log
+  10.2k  11/24/20 13:08  CSS_analysis_plant_panel.do
+  94.7k  11/24/20 19:17  CSS_analysis_plant_panel_24_Nov_2020.log
+   6.0k  11/24/20 18:55  CSS_analysis_stayers.do
+  13.2k  11/24/20 19:18  CSS_analysis_stayers_24_Nov_2020.log
+   0.9k  11/24/20 18:57  CSS_emp_shares.do 
+   2.3k  11/24/20 19:18  CSS_emp_shares_24_Nov_2020.log
+   4.0k  11/24/20 13:09  CSS_individualqs_graph.do
+   7.5k  11/24/20 19:18  CSS_individualqs_graph_24_Nov_2020.log
+   5.5k  11/24/20 13:09  CSS_predict_retained_worker_quality.do
+  16.6k  11/24/20 19:18  CSS_predict_retained_worker_quality_24_Nov_2020.log
+   0.5k  11/24/20 15:47  paths.do          
+   1.8k  11/24/20 19:09  runall.do         
+
+. cd ..
+E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test
+
+. dir
+  <dir>  11/24/20 17:52  .                 
+  <dir>  11/24/20 17:52  ..                
+  <dir>  11/24/20 17:52  data              
+  <dir>  11/24/20 17:52  output            
+  <dir>  11/25/20  8:08  programs          
+   7.0k  11/24/20 16:01  README.md         
+
+. cd data
+E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\data
+
+. dir
+  <dir>  11/24/20 17:52  .                 
+  <dir>  11/24/20 17:52  ..                
+  <dir>  11/25/20  8:26  input             
+  <dir>  11/24/20 16:03  interwrk          
+
+. cd input
+E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\data\input
+
+. dir
+  <dir>  11/25/20  8:26  .                 
+  <dir>  11/25/20  8:26  ..                
+   1.6k  11/25/20  8:26  datasig_WMS_plantyear_with_RAIS_25_Nov_2020.txt
+   2.7k  11/25/20  8:26  datasig_WMS_RAIS_flow_plantdata_25_Nov_2020.txt
+   1.1k  11/25/20  8:26  datasig_WMS_RAIS_linked_microdata_25_Nov_2020.txt
+  10.7k  11/25/20  8:26  describe_WMS_plantyear_with_RAIS_25_Nov_2020.log
+   0.5k  11/25/20  8:26  describe_WMS_RAIS_flow_microdata.dta_25_Nov_2020.log
+  18.6k  11/25/20  8:26  describe_WMS_RAIS_flow_plantdata_25_Nov_2020.log
+   6.6k  11/25/20  8:26  describe_WMS_RAIS_linked_microdata_25_Nov_2020.log
+ 344.9k   2/24/20 15:56  wmslong_forAnalysis.dta
+ 883.6k   4/15/20 14:30  WMS_plantyear_with_RAIS.dta
+3169.8M   3/17/20 11:05  WMS_RAIS_flow_microdata.dta
+8265.5k   3/17/20 11:14  WMS_RAIS_flow_plantdata.dta
+ 198.0M   3/05/20 20:35  WMS_RAIS_linked_microdata.dta
+
+. cd ..
+E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\data
+
+. cd ..
+E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test
+
+. cd programs
+E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs
+
+. dir
+  <dir>  11/25/20  8:08  .                 
+  <dir>  11/25/20  8:08  ..                
+  <dir>  11/24/20 19:09  ado               
+   1.0k  11/24/20 13:07  appendix_manager_definitions.do
+   5.4k  11/24/20 19:19  appendix_manager_definitions_24_Nov_2020.log
+  14.5k  11/24/20 13:08  appendix_plant_panel.do
+  50.8k  11/24/20 19:20  appendix_plant_panel_24_Nov_2020.log
+   8.5k  11/24/20 13:08  BBCVW_replication_ability_dist.do
+  12.0k  11/24/20 19:10  BBCVW_replication_ability_dist_24_Nov_2020.log
+   4.0k  11/24/20 13:08  BBCVW_replication_flows.do
+   9.0k  11/24/20 19:10  BBCVW_replication_flows_24_Nov_2020.log
+  16.5k  11/24/20 18:14  BBCVW_replication_plant_panel.do
+  44.4k  11/24/20 19:10  BBCVW_replication_plant_panel_24_Nov_2020.log
+   1.1k  11/25/20  8:08  config.do         
+   1.8k  11/24/20 18:21  CSS_ability_dist.do
+   7.6k  11/24/20 19:10  CSS_ability_dist_24_Nov_2020.log
+   1.9k  11/24/20 13:08  CSS_analysis_firing.do
+   3.9k  11/24/20 19:16  CSS_analysis_firing_24_Nov_2020.log
+   6.3k  11/24/20 13:08  CSS_analysis_firing_regression.do
+  39.6k  11/24/20 19:15  CSS_analysis_firing_regression_24_Nov_2020.log
+   7.1k  11/24/20 13:08  CSS_analysis_hiring.do
+  17.1k  11/24/20 19:17  CSS_analysis_hiring_24_Nov_2020.log
+   7.9k  11/24/20 18:41  CSS_analysis_hiring_regressions.do
+  23.5k  11/24/20 19:17  CSS_analysis_hiring_regressions_24_Nov_2020.log
+  10.2k  11/24/20 13:08  CSS_analysis_plant_panel.do
+  94.7k  11/24/20 19:17  CSS_analysis_plant_panel_24_Nov_2020.log
+   6.0k  11/24/20 18:55  CSS_analysis_stayers.do
+  13.2k  11/24/20 19:18  CSS_analysis_stayers_24_Nov_2020.log
+   0.9k  11/24/20 18:57  CSS_emp_shares.do 
+   2.3k  11/24/20 19:18  CSS_emp_shares_24_Nov_2020.log
+   4.0k  11/24/20 13:09  CSS_individualqs_graph.do
+   7.5k  11/24/20 19:18  CSS_individualqs_graph_24_Nov_2020.log
+   5.5k  11/24/20 13:09  CSS_predict_retained_worker_quality.do
+  16.6k  11/24/20 19:18  CSS_predict_retained_worker_quality_24_Nov_2020.log
+   0.5k  11/24/20 15:47  paths.do          
+   1.8k  11/24/20 19:09  runall.do         
+
+. do "C:\Users\schmutte\AppData\Local\Temp\STD3ddc_000000.tmp"
+
+. /*
+> describe_analysis_data.do
+> 
+> Describes all input data sources for Cornwell, Schmutte, and Scur "Building a productive workforce: the role of struct
+> ured management practices"
+> 
+> */
+. 
+. pause on
+
+. set more off
+
+. set linesize 120
+
+. 
+. local datasets "WMS_RAIS_flow_plantdata WMS_plantyear_with_RAIS WMS_RAIS_linked_microdata WMS_RAIS_flow_microdata wmsl
+> ong_forAnalysis"
+
+. 
+. foreach set in `datasets' {
+  2.   capture log close
+  3.   local c_date = c(current_date)
+  4.   local cdate = subinstr("`c_date'", " ", "_", .)
+  5.   do "./paths.do"
+  6.   log using "${inpath}/describe_`set'_`cdate'.log", replace text
+  7.   use "${inpath}/`set'.dta", clear
+  8.   datasignature set, saving(${inpath}/datasig_`set'_`cdate'.txt)
+  9.   describe
+ 10.   log close
+ 11.   }

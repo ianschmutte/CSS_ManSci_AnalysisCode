@@ -1,0 +1,373 @@
+* 00000007
+*! version 1.0.0
+* Do not erase or edit this file
+* It is used by Stata to track the ado and help
+* files you have installed.
+
+S http://fmwww.bc.edu/repec/bocode/b
+N binscatter.pkg
+D 24 Nov 2020
+U 1
+d 'BINSCATTER': module to generate binned scatterplots
+d 
+d  binscatter generates binned scatterplots, and is optimized for
+d speed in large  datasets.  Binned scatterplots provide a
+d non-parametric way of visualizing the relationship between two
+d variables.  With a large number of observations, a scatterplot
+d that plots every data point would become too crowded to interpret
+d visually.  binscatter groups the x-axis variable into equal-sized
+d bins, computes the mean of the x-axis and y-axis variables within
+d each bin, then creates a scatterplot of these data points.  It
+d provides built-in options to control for covariates before
+d plotting the relationship.  It will also plot fit lines based on
+d the underlying data, and can automatically handle regression
+d discontinuities.
+d 
+d KW: scatterplot
+d KW: data description
+d KW: regression discontinuity
+d 
+d Requires: Stata version 12.1
+d 
+d Distribution-Date: 20131124
+d 
+d Author: Michael Stepner
+d Support: email michaelstepner@@gmail.com
+d 
+f b\binscatter.ado
+f b\binscatter.sthlp
+e
+S http://fmwww.bc.edu/repec/bocode/e
+N estout.pkg
+D 24 Nov 2020
+U 2
+d 'ESTOUT': module to make regression tables
+d 
+d  estout produces a table of regression results from one or
+d several models for use with spreadsheets, LaTeX, HTML, or a
+d word-processor table. eststo stores a quick copy of the active
+d estimation results for later tabulation. esttab is a wrapper for
+d estout. It displays a pretty looking publication-style regression
+d table without much typing. estadd adds additional results to the
+d e()-returns for one or several models previously fitted and
+d stored. This package subsumes the previously circulated esto,
+d esta, estadd,  and estadd_plus. An earlier version of estout is
+d available  as estout1.
+d 
+d KW: estimates
+d KW: LaTeX
+d KW: HTML
+d KW: word processor
+d KW: output
+d 
+d Requires: Stata version 8.2
+d 
+d Distribution-Date: 20190613
+d 
+d Author: Ben Jann, University of Bern
+d Support: email jann@@soz.unibe.ch
+d 
+f _\_eststo.ado
+f _\_eststo.hlp
+f e\estadd.ado
+f e\estadd.hlp
+f e\estout.ado
+f e\estout.hlp
+f e\eststo.ado
+f e\eststo.hlp
+f e\estpost.ado
+f e\estpost.hlp
+f e\esttab.ado
+f e\esttab.hlp
+e
+S http://fmwww.bc.edu/repec/bocode/c
+N coefplot.pkg
+D 24 Nov 2020
+U 3
+d 'COEFPLOT': module to plot regression coefficients and other results
+d 
+d   coefplot plots results from estimation commands or Stata
+d matrices. Results from multiple models or matrices can be
+d combined in a single graph. The default behavior of coefplot is
+d to draw markers for coefficients and horizontal spikes for
+d confidence intervals. However, coefplot can also produce various
+d other types of graphs.
+d 
+d KW: graphics
+d KW: coefficients
+d KW: estimation
+d 
+d Requires: Stata version 11
+d 
+d Distribution-Date: 20190224
+d 
+d Author: Ben Jann, University of Bern
+d Support: email jann@@soz.unibe.ch
+d 
+f c\coefplot.ado
+f c\coefplot.sthlp
+e
+S http://fmwww.bc.edu/repec/bocode/g
+N genstack.pkg
+D 24 Nov 2020
+U 4
+d 'GENSTACK': module to generate Twoway Stacked Charts
+d 
+d  Stata can only produce oneway stacked charts. These however, do
+d not allow you to  layer other charts. Indeed, Stata is
+d notoriously unfriendly in producing a twoway stacked chart where
+d you have the freedom of layering different chart styles.
+d genstack helps you prepare the data for such charts.
+d 
+d KW: graphics
+d KW: graph bar
+d KW: twoway
+d KW: stacked
+d 
+d Requires: Stata version 10
+d 
+d Distribution-Date: 20150829
+d 
+d Author: Gregorio Impavido, IMF
+d Support: email gimpavido@@imf.org
+d 
+f g\genstack.ado
+f g\genstack.sthlp
+e
+S http://fmwww.bc.edu/repec/bocode/e
+N egenmore.pkg
+D 24 Nov 2020
+U 5
+d 'EGENMORE': modules to extend the generate function
+d 
+d  This package includes various -egen- functions. For full
+d details, please read the help file (ssc type egenmore.sthlp).
+d Some of these routines are updates of those published in STB-50.
+d _gfilter, _ggroup2, _gegroup and _gcorr require Stata 7.
+d _gminutes, _grepeat and _gseconds require Stata 8.  _gcorr and
+d _gnoccur were written by Nick Winter
+d (nwinter@policystudies.com). _grsum2 was written by Steven
+d Stillman (s.stillman@verizon.net). _gdhms, _gelap, _gelap2,
+d _ghms, _gtod and _gtruncdig were written by Kit Baum
+d (baum@bc.edu).
+d 
+d KW: egen
+d KW: grouping
+d KW: graphing
+d KW: strings
+d KW: dates
+d KW: first
+d KW: last
+d KW: random
+d KW: row
+d 
+d Requires: Stata version 6.0 (7.0 for _gfilter7, _ggroup2, _gegroup, _gsieve, _gnoccur; 8.2 for _gcorr, _grepeat, _gminutes, _gseconds, _gfilter, _gaxis, _gdensity, _gxtile, _gtotal0, _gmixnorm, _gw
+d 
+d 
+d Author: Nicholas J. Cox, University of Durham
+d Support: email N.J.Cox@@durham.ac.uk
+d 
+d Distribution-Date: 20190124
+d 
+f e\egenmore.sthlp
+f _\_gclsst.ado
+f _\_gnmiss.ado
+f _\_ggmean.ado
+f _\_ghmean.ado
+f _\_grall.ado
+f _\_grany.ado
+f _\_grcount.ado
+f _\_grndsub.ado
+f _\_grndint.ado
+f _\_gfilter.ado
+f _\_gifirst.ado
+f _\_gilast.ado
+f _\_gncyear.ado
+f _\_ghmm.ado
+f _\_ghmmss.ado
+f _\_gincss.ado
+f _\_gfirst.ado
+f _\_glastnm.ado
+f _\_gnss.ado
+f _\_gbom.ado
+f _\_gbomd.ado
+f _\_geom.ado
+f _\_geomd.ado
+f _\_gnwords.ado
+f _\_gwordof.ado
+f _\_gnvals.ado
+f _\_gridit.ado
+f _\_gsemean.ado
+f _\_gmsub.ado
+f _\_gston.ado
+f _\_gntos.ado
+f _\_gewma.ado
+f _\_grecord.ado
+f _\_gbase.ado
+f _\_gdecimal.ado
+f _\_ggroup2.ado
+f _\_gsumoth.ado
+f _\_gegroup.ado
+f _\_gcorr.ado
+f _\_grsum2.ado
+f _\_gsieve.ado
+f _\_gdhms.ado
+f _\_ghms.ado
+f _\_gtod.ado
+f _\_gelap.ado
+f _\_gelap2.ado
+f _\_gnoccur.ado
+f _\_gwtfreq.ado
+f _\_gvar.ado
+f _\_gminutes.ado
+f _\_gseconds.ado
+f _\_grepeat.ado
+f _\_gaxis.ado
+f _\_gdensity.ado
+f _\_gxtile.ado
+f _\_gtotal0.ado
+f _\_gmixnorm.ado
+f _\_gadjl.ado
+f _\_gadju.ado
+f _\_gdayofyear.ado
+f _\_gfoy.ado
+f _\_goutside.ado
+f _\_gmlabvpos.ado
+f _\_giso3166.ado
+f _\_growmedian.ado
+f _\_gwpctile.ado
+f _\_gd2.ado
+f _\_grownvals.ado
+f _\_growsvals.ado
+f _\_gtruncdig.ado
+e
+S http://fmwww.bc.edu/repec/bocode/i
+N ivreg2.pkg
+D 24 Nov 2020
+U 6
+d 'IVREG2': module for extended instrumental variables/2SLS and GMM estimation
+d 
+d  ivreg2 provides extensions to Stata's official ivregress and
+d newey. Its main capabilities: two-step feasible GMM estimation;
+d continuously updated GMM estimation (CUE); LIML and k-class
+d estimation; automatic output of the Hansen-Sargan or
+d Anderson-Rubin statistic for overidentifying restrictions; C
+d statistic test of exogeneity of subsets of instruments (orthog()
+d option); kernel-based autocorrelation-consistent (AC) and
+d heteroskedastic and autocorrelation-consistent (HAC) estimation,
+d with user-specified choice of kernel; Cragg's "heteroskedastic
+d OLS" (HOLS) estimator; default reporting of large-sample
+d statistics (z and chi-squared rather than t and F); small option
+d to report small-sample statistics; first-stage regression
+d reported with F-test of excluded instruments and R-squared with
+d included instruments "partialled-out"; enhanced Kleibergen-Paap
+d and Cragg-Donald tests for weak instruments, redundancy of
+d instruments, significance of endogenous regressors; two-way
+d clustering of standard errors;  Kiefer and Driscoll-Kraay
+d standard errors. ivreg2 can also be used for ordinary least
+d squares (OLS) estimation using the same command syntax as Stata's
+d official regress and newey. New in this version: ivreg2 now
+d supports factor variables. This is version 4.1.11 of ivreg2,
+d updated from that published in Stata Journal, 5(4), requiring
+d Stata 11.2 or better. Stata 8.2/9.2/10.2 users may use this
+d routine, which will  automatically call ivreg28, ivreg29, or
+d ivreg210, respectively. These versions are now included in the
+d ivreg2 package. Stata 7 users may use the Stata Journal version
+d of ivreg2, accessible via net search ivreg2.
+d 
+d KW: instrumental variables
+d KW: Sargan test
+d KW: robust estimation
+d KW: orthogonality
+d KW: GMM
+d KW: Hansen's J
+d KW: heteroskedastic OLS,
+d 
+d Requires: Stata version 11.2 and ranktest from SSC
+d 
+d Distribution-Date: 20200626
+d 
+d Author: Christopher F Baum, Boston College
+d Support: email baum@@bc.edu
+d 
+d Author: Mark E Schaffer, Heriot-Watt University
+d Support: email m.e.schaffer@@hw.ac.uk
+d 
+d Author: Steven Stillman, Free University of Bozen-Bolzano
+d Support: email  Steven.Stillman@@unibz.it
+d 
+f i\ivreg2.ado
+f i\ivreg2.sthlp
+f i\ivreg2_p.ado
+f l\livreg2.mlib
+f i\ivreg210.ado
+f i\ivreg210.sthlp
+f i\ivreg210_p.ado
+f i\ivreg29.ado
+f i\ivreg29.hlp
+f i\ivreg29_p.ado
+f i\ivreg29_cue.ado
+f i\ivreg28.ado
+f i\ivreg28.hlp
+f i\ivreg28_p.ado
+f i\ivreg28_cue.ado
+e
+S http://fmwww.bc.edu/repec/bocode/r
+N ranktest.pkg
+D 24 Nov 2020
+U 7
+d 'RANKTEST': module to test the rank of a matrix
+d 
+d  ranktest implements various tests for the rank of a matrix.
+d Tests of the rank of a matrix have many practical applications.
+d For example, in econometrics the requirement for identification
+d is the rank condition, which states that a particular matrix must
+d be of full column rank. Another example from econometrics
+d concerns cointegration in vector autoregressive (VAR) models; the
+d Johansen trace test is a test of a rank of a particular matrix.
+d The traditional test of the rank of a matrix for the standard
+d (stationary) case is the Anderson (1951) canonical correlations
+d test. If we denote one list of variables as Y and a second as Z,
+d and we calculate the squared canonical correlations between Y and
+d Z, the LM form of the Anderson test, where the null hypothesis is
+d that the matrix of correlations or regression parameters B
+d between Y and Z has rank(B)=r, is N times the sum of the r+1
+d largest squared canonical correlations. A large test statistic
+d and rejection of the null indicates that the matrix has rank at
+d least r+1. The Cragg-Donald (1993) statistic is a closely related
+d Wald test for the rank of a matrix. The standard versions of
+d these tests require the assumption that the covariance matrix has
+d a Kronecker form; when this is not so, e.g., when disturbances
+d are heteroskedastic or autocorrelated, the test statistics are no
+d longer valid. ranktest implements various generalizations of
+d these tests - Kleibergen-Paap, Cragg-Donald, and J-type 2-step
+d GMM and CUE GMM tests - to the case of a non-Kronecker covariance
+d matrix. The implementation in ranktest will calculate test
+d statistics that are robust to various forms of
+d heteroskedasticity, autocorrelation, and clustering.
+d 
+d KW: matrix
+d KW: rank
+d KW: collinearity
+d KW: cointegration
+d 
+d Requires: Stata version 12 (version 9.2 for ranktest9, version 11 for ranktest11)
+d 
+d Distribution-Date: 20200929
+d 
+d Author: Frank Kleibergen, Brown University
+d Support: email  Frank_Kleibergen@@brown.edu
+d 
+d Author: Mark E Schaffer, Heriot-Watt University
+d Support: email m.e.schaffer@@hw.ac.uk
+d 
+d Author: Frank Windmeijer, University of Oxford
+d Support: email frank.windmeijer@@stats.ox.ac.uk
+d 
+f r\ranktest.ado
+f r\ranktest9.ado
+f r\ranktest11.ado
+f r\ranktest.sthlp
+f r\ranktest11.sthlp
+f l\livreg2.mlib
+e

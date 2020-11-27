@@ -1,0 +1,99 @@
+------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\../data/inpu
+> t/describe_WMS_RAIS_linked_microdata_25_Nov_2020.log
+  log type:  text
+ opened on:  25 Nov 2020, 08:26:42
+  398354:73(105428):3826960520:1269628628       (data signature set)
+  (file ../data/input/datasig_WMS_RAIS_linked_microdata_25_Nov_2020.txt saved)
+
+Contains data from ../data/input/WMS_RAIS_linked_microdata.dta
+  obs:       398,354                          
+ vars:            73                          5 Mar 2020 20:35
+ size:   207,542,434                          (_dta has notes)
+------------------------------------------------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+------------------------------------------------------------------------------------------------------------------------
+account_id      str22   %22s                * ID: BvD account ID (original)
+cnpj            str74   %74s                  ID: CNPJ
+year            double  %12.0g              * ID: Year of WMS wave
+sic             int     %9.0g                 ID: 3-digit SIC
+lean1           float   %10.0g              * MGMT: Intro to lean
+lean2           float   %10.0g              * MGMT: Rationale for lean
+perf1           float   %10.0g              * MGMT: Process Documentation
+perf2           float   %10.0g              * MGMT: Performance Tracking
+perf3           float   %10.0g              * MGMT: Performance Review
+perf4           float   %10.0g              * MGMT: Performance Dialogue
+perf5           float   %10.0g              * MGMT: Consequence Management
+perf6           float   %10.0g              * MGMT: Type of Targets
+perf7           float   %10.0g              * MGMT: Interconnection of Goals
+perf8           float   %10.0g              * MGMT: Time Horizon
+perf9           float   %10.0g              * MGMT: Goals are Stretching
+perf10          float   %10.0g              * MGMT: Clarity of Goals and Measurement
+talent1         float   %10.0g              * MGMT: Instilling a Talent Mindset
+talent2         float   %10.0g              * MGMT: Building a High-Performance Culture
+talent3         float   %10.0g              * MGMT: Making Room for Talent
+talent4         float   %10.0g              * MGMT: Developing Talent
+talent5         float   %10.0g              * MGMT: Creating a Distinctive EVP
+talent6         float   %10.0g              * MGMT: Retaining Talent
+emp_firm        long    %10.0g              * FIRM: # employees (firm)
+xsite1          int     %10.0g              * FIRM: # production sites (total)
+xsite2          int     %10.0g              * FIRM: # production sites (abroad)
+mne_yn          byte    %10.0g              * FIRM: =1 if multinational
+firmage         int     %9.0g               * FIRM: firm age
+competition     byte    %10.0g              * FIRM: # competitors (reported/perceived)
+ownership       str37   %37s                * OWN: Who knows the firm
+family          float   %9.0g                 OWN: =1 if family firm
+founder         float   %9.0g                 OWN: =1 if founder firm
+union           float   %10.0g              * WORK: % union members
+percent_m       float   %10.0g              * WORK: % mgrs in the firm
+degree_t        float   %9.0g               * WORK: % all workers with degree
+female_t        float   %9.0g                 WORK: % female, total
+management      float   %9.0g                 MGMT: Overall management score
+operations      float   %9.0g                 MGMT: Average of lean1 & lean2
+monitor         float   %9.0g                 MGMT: Average of perf1 to perf5
+target          float   %9.0g                 MGMT: Average of perf6 to perf10
+people          float   %9.0g                 MGMT: Average of talent1 to talent6
+formal          float   %23.0g     struc      Management score >= 3
+high_manag_p90  float   %21.0g     manag      
+pis             str12   %12s                  Worker PIS code
+akm_pe          double  %12.0g                Estimated person effect from AKM
+akm_fe          double  %12.0g                Estimated employer effect from AKM
+cnae20_class    str6    %6s                   Industry class (5 digit) according to CNAE 2.0
+cause_of_sep    str2    %2s                   Reason for contract termination
+tenure_months   double  %12.0g                Tenure in contract (in months)
+num_hours_con~d double  %12.0g                Number of weekly hours contracted
+age_31dec       double  %12.0g                Age on Dec. 31 based on modal date of birth reported for this PIS
+earn_avg_mont~l double  %12.0g                Inflation Adjusted Monthly Earnings - 2015 Reais
+male            double  %12.0g                
+race_white      double  %12.0g                
+race_pardo      double  %12.0g                
+race_preto      double  %12.0g                
+race_other      double  %12.0g                
+educ_best       double  %12.0g                Maximum education observed for this PIS up to this year
+has_akm_pe      double  %12.0g                Worker matched to an estimated AKM person effect
+log_wage        double  %12.0g                
+state           str6    %6s                   
+occ_dir         double  %12.0g                
+occ_mngr        double  %12.0g                
+occ_wms_mngr    double  %12.0g                
+occ_labr        double  %12.0g                
+occ_prod        double  %12.0g                
+occ_tech        double  %12.0g                
+occ_supr        double  %12.0g                
+hire            double  %12.0g                
+sep             double  %12.0g                
+nohs            double  %12.0g                
+somehs          double  %12.0g                
+hs              double  %12.0g                
+coll            double  %12.0g                
+                                            * indicated variables have notes
+------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\../data/inpu
+> t/describe_WMS_RAIS_linked_microdata_25_Nov_2020.log
+  log type:  text
+ closed on:  25 Nov 2020, 08:26:43
+------------------------------------------------------------------------------------------------------------------------

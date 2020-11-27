@@ -1,0 +1,420 @@
+------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\CSS_analysis
+> _hiring_regressions_24_Nov_2020.log
+  log type:  text
+ opened on:  24 Nov 2020, 19:16:04
+
+. 
+. /* install any packages locally */
+. sysdir set PERSONAL "$adobase/ado/personal"
+
+. sysdir set PLUS     "$adobase/ado/plus"
+
+. sysdir set SITE     "$adobase/ado/site"
+
+. 
+. /* See https://www.stata.com/manuals13/pcreturn.pdf#pcreturn */
+. local variant = cond(c(MP),"MP",cond(c(SE),"SE",c(flavor)) )  
+
+. 
+. di "=== SYSTEM DIAGNOSTICS ==="
+=== SYSTEM DIAGNOSTICS ===
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 15.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 03 Feb 2020
+
+. di "Variant:       `variant'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    4
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. di "=========================="
+==========================
+
+. 
+end of do-file
+
+. 
+. pause on
+
+. set more off
+
+. set linesize 120                                                                                                      
+>  
+
+. 
+. /* %*************************************************************************** */
+.     global firm_ctrl c.lemp c.lfirmage i.compet_cat i.own_cat i.reg_grp
+
+.     global wrk_ctrl i.male i.race_* i.educ_best
+
+. *-----------------------------------------------------------------
+. * RANK-RANK REGRESSIONS
+. *-----------------------------------------------------------------
+. 
+. foreach type in labr mngr{
+  2.     use "${inpath}/WMS_RAIS_flow_microdata.dta", clear
+  3.     gen reg_grp = real(substr(state,1,1))
+  4.         keep if occ_`type' == 1
+  5.         local num_pe_quantiles = 100
+  6.         keep if hire==1 & sep==0
+  7.         xtile pe_q = akm_pe, nq(`num_pe_quantiles')
+  8.         preserve
+  9.         keep if formal==1
+ 10.         xtile pe_q_formal = akm_pe, nq(100)
+ 11.         keep pis pe_q_formal
+ 12.         tempfile pe_rank
+ 13.         save `pe_rank'
+ 14.         collapse pe_q_formal , by(pis)
+ 15.         save `pe_rank', replace
+ 16.         restore
+ 17.         merge m:1 pis using "`pe_rank'"
+ 18.         preserve
+ 19.         keep if formal==0
+ 20.         xtile pe_q_informal = akm_pe, nq(100)
+ 21.         keep pe_q_informal pis
+ 22.         collapse pe_q_informal, by(pis)
+ 23.         save `pe_rank', replace
+ 24.         restore
+ 25.         drop _merge
+ 26.         merge m:1 pis using "`pe_rank'"
+ 27.         gen pe_rank_by_type = pe_q_formal
+ 28.         replace pe_rank_by_type = pe_q_informal if formal == 0
+ 29. 
+.         * Models*
+.         qui eststo base_unstruc_`type': reg pe_rank_by_type c.pe_q##c.pe_q i.year if formal==0, cluster(cnpj)
+ 30.         estimates save ${tabpath}/appendix/CSS_hiring_reg_unstruc_`type'_base.ster, replace
+ 31. 
+.         qui eststo base_struc_`type': reg pe_rank_by_type c.pe_q##c.pe_q i.year if formal==1, cluster(cnpj)
+ 32.         estimates save ${tabpath}/appendix/CSS_hiring_reg_struc_`type'_base.ster, replace
+ 33.     
+.         qui eststo base_both_`type': reg  pe_rank_by_type i.formal##(c.pe_q##c.pe_q i.year), cluster(cnpj)
+ 34.         estimates save ${tabpath}/appendix/CSS_hiring_reg_both_`type'_base.ster, replace
+ 35. 
+.         binscatter pe_rank_by_type pe_q, line(none) controls(i.year) by(formal) ///
+>         savedata(${figpath}/appendix/CSS_hirereg_fig_data_`type'_base) replace
+ 36. 
+.         qui eststo firm_unstruc_`type': areg pe_rank_by_type c.pe_q##c.pe_q ${firm_ctrl} i.year if formal==0, cluster(
+> cnpj) ab(sic2)
+ 37.         estimates save ${tabpath}/appendix/CSS_hiring_reg_unstruc_`type'_firm.ster, replace
+ 38. 
+.         qui eststo firm_struc_`type': areg pe_rank_by_type c.pe_q##c.pe_q ${firm_ctrl} i.year if formal==1, cluster(cn
+> pj) ab(sic2)
+ 39.         estimates save ${tabpath}/appendix/CSS_hiring_reg_struc_`type'_firm.ster, replace
+ 40.         
+.         qui eststo firm_both_`type': areg pe_rank_by_type i.formal##(c.pe_q##c.pe_q ${firm_ctrl} i.year) , cluster(cnp
+> j) ab(sic2)
+ 41.         estimates save ${tabpath}/appendix/CSS_hiring_reg_both_`type'_firm.ster, replace
+ 42. 
+.         binscatter pe_rank_by_type pe_q, line(none) controls(i.year $firm_ctrl) by(formal) absorb(sic2) ///
+>         savedata(${figpath}/appendix/CSS_hirereg_fig_data_`type'_firm) replace
+ 43. 
+.         qui eststo firmwrk_unstruc_`type': areg pe_rank_by_type c.pe_q##c.pe_q ${firm_ctrl} ${wrk_ctrl} i.year ///
+>             if formal==0, cluster(cnpj) ab(sic2)
+ 44.         estimates save ${tabpath}/appendix/CSS_hiring_reg_unstruc_`type'_firmwrk.ster, replace
+ 45. 
+.         qui eststo firmwrk_struc_`type': areg pe_rank_by_type c.pe_q##c.pe_q ${firm_ctrl} ${wrk_ctrl} i.year ///
+>             if formal==1, cluster(cnpj) ab(sic2)
+ 46.         estimates save ${tabpath}/appendix/CSS_hiring_reg_struc_`type'_firmwrk.ster, replace
+ 47.         
+.         qui eststo firmwrk_both_`type': areg pe_rank_by_type i.formal##(c.pe_q##c.pe_q ${firm_ctrl} ${wrk_ctrl} i.year
+> ) ///
+>             , cluster(cnpj) ab(sic2)
+ 48.         estimates save ${tabpath}/appendix/CSS_hiring_reg_both_`type'_firmwrk.ster, replace
+ 49. 
+.         binscatter pe_rank_by_type pe_q, line(none) controls(i.year ${firm_ctrl} ${wrk_ctrl}) by(formal) absorb(sic2) 
+> ///
+>         savedata(${figpath}/appendix/CSS_hirereg_fig_data_`type'_firmwrk) replace
+ 50. 
+. }
+(22 missing values generated)
+(41,208 observations deleted)
+(1,333,818 observations deleted)
+(208,282 observations deleted)
+file C:\Users\schmutte\AppData\Local\Temp\ST_3ddc_000002.tmp saved
+file C:\Users\schmutte\AppData\Local\Temp\ST_3ddc_000002.tmp saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                       207,123
+        from master                   207,123  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                           130,992  (_merge==3)
+    -----------------------------------------
+(129,833 observations deleted)
+file C:\Users\schmutte\AppData\Local\Temp\ST_3ddc_000002.tmp saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                       128,676
+        from master                   128,676  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                           209,439  (_merge==3)
+    -----------------------------------------
+(262,698 missing values generated)
+(114,899 real changes made)
+(note: file ../output/tables/appendix/CSS_hiring_reg_unstruc_labr_base.ster not found)
+file ../output/tables/appendix/CSS_hiring_reg_unstruc_labr_base.ster saved
+(note: file ../output/tables/appendix/CSS_hiring_reg_struc_labr_base.ster not found)
+file ../output/tables/appendix/CSS_hiring_reg_struc_labr_base.ster saved
+(note: file ../output/tables/appendix/CSS_hiring_reg_both_labr_base.ster not found)
+file ../output/tables/appendix/CSS_hiring_reg_both_labr_base.ster saved
+(note: file ../output/figures/appendix/CSS_hirereg_fig_data_labr_base.csv not found)
+(file ../output/figures/appendix/CSS_hirereg_fig_data_labr_base.csv written containing saved data)
+(note: file ../output/figures/appendix/CSS_hirereg_fig_data_labr_base.do not found)
+(file ../output/figures/appendix/CSS_hirereg_fig_data_labr_base.do written containing commands to process saved data)
+(note: file ../output/tables/appendix/CSS_hiring_reg_unstruc_labr_firm.ster not found)
+file ../output/tables/appendix/CSS_hiring_reg_unstruc_labr_firm.ster saved
+(note: file ../output/tables/appendix/CSS_hiring_reg_struc_labr_firm.ster not found)
+file ../output/tables/appendix/CSS_hiring_reg_struc_labr_firm.ster saved
+(note: file ../output/tables/appendix/CSS_hiring_reg_both_labr_firm.ster not found)
+file ../output/tables/appendix/CSS_hiring_reg_both_labr_firm.ster saved
+(note: file ../output/figures/appendix/CSS_hirereg_fig_data_labr_firm.csv not found)
+(file ../output/figures/appendix/CSS_hirereg_fig_data_labr_firm.csv written containing saved data)
+(note: file ../output/figures/appendix/CSS_hirereg_fig_data_labr_firm.do not found)
+(file ../output/figures/appendix/CSS_hirereg_fig_data_labr_firm.do written containing commands to process saved data)
+(note: file ../output/tables/appendix/CSS_hiring_reg_unstruc_labr_firmwrk.ster not found)
+file ../output/tables/appendix/CSS_hiring_reg_unstruc_labr_firmwrk.ster saved
+(note: file ../output/tables/appendix/CSS_hiring_reg_struc_labr_firmwrk.ster not found)
+file ../output/tables/appendix/CSS_hiring_reg_struc_labr_firmwrk.ster saved
+(note: file ../output/tables/appendix/CSS_hiring_reg_both_labr_firmwrk.ster not found)
+file ../output/tables/appendix/CSS_hiring_reg_both_labr_firmwrk.ster saved
+(note: file ../output/figures/appendix/CSS_hirereg_fig_data_labr_firmwrk.csv not found)
+(file ../output/figures/appendix/CSS_hirereg_fig_data_labr_firmwrk.csv written containing saved data)
+(note: file ../output/figures/appendix/CSS_hirereg_fig_data_labr_firmwrk.do not found)
+(file ../output/figures/appendix/CSS_hirereg_fig_data_labr_firmwrk.do written containing commands to process saved data)
+(22 missing values generated)
+(1,671,933 observations deleted)
+(35,937 observations deleted)
+(2,015 observations deleted)
+file C:\Users\schmutte\AppData\Local\Temp\ST_3ddc_000005.tmp saved
+file C:\Users\schmutte\AppData\Local\Temp\ST_3ddc_000005.tmp saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                         2,001
+        from master                     2,001  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                             3,270  (_merge==3)
+    -----------------------------------------
+(3,256 observations deleted)
+file C:\Users\schmutte\AppData\Local\Temp\ST_3ddc_000005.tmp saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                         3,243
+        from master                     3,243  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                             2,028  (_merge==3)
+    -----------------------------------------
+(2,499 missing values generated)
+(1,735 real changes made)
+(note: file ../output/tables/appendix/CSS_hiring_reg_unstruc_mngr_base.ster not found)
+file ../output/tables/appendix/CSS_hiring_reg_unstruc_mngr_base.ster saved
+(note: file ../output/tables/appendix/CSS_hiring_reg_struc_mngr_base.ster not found)
+file ../output/tables/appendix/CSS_hiring_reg_struc_mngr_base.ster saved
+(note: file ../output/tables/appendix/CSS_hiring_reg_both_mngr_base.ster not found)
+file ../output/tables/appendix/CSS_hiring_reg_both_mngr_base.ster saved
+(note: file ../output/figures/appendix/CSS_hirereg_fig_data_mngr_base.csv not found)
+(file ../output/figures/appendix/CSS_hirereg_fig_data_mngr_base.csv written containing saved data)
+(note: file ../output/figures/appendix/CSS_hirereg_fig_data_mngr_base.do not found)
+(file ../output/figures/appendix/CSS_hirereg_fig_data_mngr_base.do written containing commands to process saved data)
+(note: file ../output/tables/appendix/CSS_hiring_reg_unstruc_mngr_firm.ster not found)
+file ../output/tables/appendix/CSS_hiring_reg_unstruc_mngr_firm.ster saved
+(note: file ../output/tables/appendix/CSS_hiring_reg_struc_mngr_firm.ster not found)
+file ../output/tables/appendix/CSS_hiring_reg_struc_mngr_firm.ster saved
+(note: file ../output/tables/appendix/CSS_hiring_reg_both_mngr_firm.ster not found)
+file ../output/tables/appendix/CSS_hiring_reg_both_mngr_firm.ster saved
+(note: file ../output/figures/appendix/CSS_hirereg_fig_data_mngr_firm.csv not found)
+(file ../output/figures/appendix/CSS_hirereg_fig_data_mngr_firm.csv written containing saved data)
+(note: file ../output/figures/appendix/CSS_hirereg_fig_data_mngr_firm.do not found)
+(file ../output/figures/appendix/CSS_hirereg_fig_data_mngr_firm.do written containing commands to process saved data)
+(note: file ../output/tables/appendix/CSS_hiring_reg_unstruc_mngr_firmwrk.ster not found)
+file ../output/tables/appendix/CSS_hiring_reg_unstruc_mngr_firmwrk.ster saved
+(note: file ../output/tables/appendix/CSS_hiring_reg_struc_mngr_firmwrk.ster not found)
+file ../output/tables/appendix/CSS_hiring_reg_struc_mngr_firmwrk.ster saved
+(note: file ../output/tables/appendix/CSS_hiring_reg_both_mngr_firmwrk.ster not found)
+file ../output/tables/appendix/CSS_hiring_reg_both_mngr_firmwrk.ster saved
+(note: file ../output/figures/appendix/CSS_hirereg_fig_data_mngr_firmwrk.csv not found)
+(file ../output/figures/appendix/CSS_hirereg_fig_data_mngr_firmwrk.csv written containing saved data)
+(note: file ../output/figures/appendix/CSS_hirereg_fig_data_mngr_firmwrk.do not found)
+(file ../output/figures/appendix/CSS_hirereg_fig_data_mngr_firmwrk.do written containing commands to process saved data)
+
+. 
+. /* %*************************************************************************** */
+. /* Make graphs and tables */ 
+. /* %*************************************************************************** */
+. 
+. /*Binscatter figures comparing models for production worker hiring*/
+. 
+. foreach type in labr mngr{
+  2.         clear
+  3.         tempfile binsct1 binsct2
+  4.         insheet using ${figpath}/appendix/CSS_hirereg_fig_data_`type'_firm.csv
+  5.         save `binsct1', replace
+  6.         clear
+  7.         insheet using ${figpath}/appendix/CSS_hirereg_fig_data_`type'_firmwrk.csv
+  8.         save `binsct2', replace
+  9.         clear
+ 10.         insheet using ${figpath}/appendix/CSS_hirereg_fig_data_`type'_base.csv
+ 11.         append using `binsct1' `binsct2', gen(model)
+ 12. 
+.         twoway (scatter pe_rank_by_type_by1 pe_q_by1 if model==0, msymbol(Th) mcolor(green)) ///
+>                 (scatter pe_rank_by_type_by2 pe_q_by2 if model==0 , msymbol(Oh) mcolor(navy)) ///
+>                 (scatter pe_rank_by_type_by1 pe_q_by1 if model==2, msymbol(T) mcolor(green)) ///
+>                 (scatter pe_rank_by_type_by2 pe_q_by2 if model==2 , msymbol(O) mcolor(navy)) ///
+>                 , ///
+>                 plotregion(margin(zero) fcolor(white) lcolor(black) ifcolor(white) ilcolor(black)) ///
+>                 ylabel(0(25)100, labsize(medium) tlcolor(white) nogrid)  ///
+>                 xlabel(0(25)100, labsize(medsmall) tlcolor(white) nogrid) ///
+>                 ytitle("Percentile rank of hired worker"  "within firm type") ///
+>                 xtitle("Percentile rank of hired worker"  "in full distribution") ///
+>                 graphregion(fcolor(white) lcolor(white) ifcolor(white) ilcolor(white)) ///
+>                 xsize(5) ysize(5) name(`type', replace) ///
+>                 legend(label(1 "Unstructured (base model)") /// 
+>                         label(2 "Structured (base model)") /// 
+>                         label(3 "Unstructured (incl. controls)") /// 
+>                         label(4 "Structured (incl. controls)") ///
+>                         order(1 3 2 4) ring(0) pos(10) col(1) region(lcolor(white)))
+ 13.                         
+.         graph save "${figpath}/appendix/CSS_hirereg_fig_`type'.gph", replace
+ 14.         graph export "${figpath}/appendix/CSS_hirereg_fig_`type'.pdf", as(pdf) replace 
+ 15. }
+(4 vars, 20 obs)
+(note: file C:\Users\schmutte\AppData\Local\Temp\ST_3ddc_000007.tmp not found)
+file C:\Users\schmutte\AppData\Local\Temp\ST_3ddc_000007.tmp saved
+(4 vars, 20 obs)
+(note: file C:\Users\schmutte\AppData\Local\Temp\ST_3ddc_000008.tmp not found)
+file C:\Users\schmutte\AppData\Local\Temp\ST_3ddc_000008.tmp saved
+(4 vars, 20 obs)
+(note: file ../output/figures/appendix/CSS_hirereg_fig_labr.gph not found)
+(file ../output/figures/appendix/CSS_hirereg_fig_labr.gph saved)
+(file ../output/figures/appendix/CSS_hirereg_fig_labr.pdf written in PDF format)
+(4 vars, 20 obs)
+(note: file C:\Users\schmutte\AppData\Local\Temp\ST_3ddc_000009.tmp not found)
+file C:\Users\schmutte\AppData\Local\Temp\ST_3ddc_000009.tmp saved
+(4 vars, 20 obs)
+(note: file C:\Users\schmutte\AppData\Local\Temp\ST_3ddc_00000a.tmp not found)
+file C:\Users\schmutte\AppData\Local\Temp\ST_3ddc_00000a.tmp saved
+(4 vars, 20 obs)
+(note: file ../output/figures/appendix/CSS_hirereg_fig_mngr.gph not found)
+(file ../output/figures/appendix/CSS_hirereg_fig_mngr.gph saved)
+(file ../output/figures/appendix/CSS_hirereg_fig_mngr.pdf written in PDF format)
+
+. 
+.         /*Tables of model estimates*/
+. foreach type in labr mngr{
+  2.         estimates use ${tabpath}/appendix/CSS_hiring_reg_unstruc_`type'_base
+  3.         eststo nu1: 
+  4.         estimates use ${tabpath}/appendix/CSS_hiring_reg_unstruc_`type'_firm
+  5.         eststo nu2:
+  6.         estimates use ${tabpath}/appendix/CSS_hiring_reg_unstruc_`type'_firmwrk
+  7.         eststo nu3:
+  8.         estimates use ${tabpath}/appendix/CSS_hiring_reg_struc_`type'_base
+  9.         eststo ns1: 
+ 10.         estimates use ${tabpath}/appendix/CSS_hiring_reg_struc_`type'_firm
+ 11.         eststo ns2:
+ 12.         estimates use ${tabpath}/appendix/CSS_hiring_reg_struc_`type'_firmwrk
+ 13.         eststo ns3:
+ 14.         estimates use ${tabpath}/appendix/CSS_hiring_reg_both_`type'_base
+ 15.         eststo nb1:
+ 16.         estimates use ${tabpath}/appendix/CSS_hiring_reg_both_`type'_firm
+ 17.         eststo nb2:
+ 18.         estimates use ${tabpath}/appendix/CSS_hiring_reg_both_`type'_firmwrk
+ 19.         eststo nb3:
+ 20. 
+.         esttab ns1 nu1 nb1 ns3 nu3 nb3 using "${tabpath}/appendix/app_hiring_rank_regs_`type'.tex", booktabs replace /
+> //
+>                 keep(1.formal pe_q* c.pe_q* 1.formal#c.p* _cons)  ///
+>                 order(1.formal pe_q* c.pe_q* 1.formal#c.p* _cons) ///
+>                 compress collabels(none) nodepvars nogap  ///
+>                 mtitles("Structured = 1" "Structured = 1" "Combined" "Structured = 0" "Structured = 1" "Combined") ///
+>                 coef(pe_q "Rank" c.pe_q#c.pe_q "Rank Sq." 1.formal "Struc. Mgmt." ///
+>                 1.formal#c.pe_q "Struc. X Rank" 1.formal#c.pe_q#c.pe_q "Struc. X Rank Sq." _cons "Constant") ///
+>                 cells(b(star fmt(3)) se(par fmt(3))) ///
+>                 scalars("N_clust Firms") ///
+>                 indicate("Year controls = 2010.year" "Firm \& Worker controls = lemp", labels("\cmark" ""))
+ 21. 
+. 
+.         esttab ns1 nu1 nb1 ns3 nu3 nb3 ,  ///
+>                 keep(1.formal pe_q* c.pe_q* 1.formal#c.p* _cons)  ///
+>                 order(1.formal pe_q* c.pe_q* 1.formal#c.p* _cons) ///
+>                 compress collabels(none) nodepvars nogap  ///
+>                 mtitles("Structured = 0" "Structured = 1" "Combined" "Structured = 0" "Structured = 1" "Combined") ///
+>                 coef(pe_q "Rank" c.pe_q#c.pe_q "Rank Sq." 1.formal "Struc. Mgmt." ///
+>                 1.formal#c.pe_q "Struc. X Rank" 1.formal#c.pe_q#c.pe_q "Struc. X Rank Sq." _cons "Constant") ///
+>                 cells(b(star fmt(3)) se(par fmt(3))) ///
+>                 scalars("N_clust Firms") ///
+>                 indicate("Year controls = 2010.year" "Firm \& Worker controls = lemp", labels("\cmark" ""))
+ 22. } 
+(note: file ../output/tables/appendix/app_hiring_rank_regs_labr.tex not found)
+(output written to ../output/tables/appendix/app_hiring_rank_regs_labr.tex)
+
+----------------------------------------------------------------------------------------
+                 (1)          (2)          (3)          (4)          (5)          (6)   
+           Structu~0    Structu~1     Combined    Structu~0    Structu~1     Combined   
+----------------------------------------------------------------------------------------
+Str.. Mg~.                               1.925***                               1.559***
+                                       (0.148)                                (0.286)   
+Rank           0.840***     1.089***     1.089***     0.843***     1.088***     1.088***
+             (0.007)      (0.004)      (0.004)      (0.006)      (0.003)      (0.003)   
+Rank Sq.       0.001***    -0.001***    -0.001***     0.001***    -0.001***    -0.001***
+             (0.000)      (0.000)      (0.000)      (0.000)      (0.000)      (0.000)   
+Str.. X ~k                              -0.250***                              -0.246***
+                                       (0.008)                                (0.007)   
+Str.. X ~.                               0.002***                               0.002***
+                                       (0.000)                                (0.000)   
+Constant       1.281***    -0.644***    -0.644***     0.925**     -0.682***    -0.642***
+             (0.128)      (0.074)      (0.074)      (0.280)      (0.082)      (0.101)   
+Year con~s    \cmark       \cmark       \cmark       \cmark       \cmark       \cmark   
+Firm \& ~s                                           \cmark       \cmark       \cmark   
+----------------------------------------------------------------------------------------
+N              74653       114923       189576        74653       114923       189576   
+Firms            242          469          711          242          469          711   
+----------------------------------------------------------------------------------------
+(note: file ../output/tables/appendix/app_hiring_rank_regs_mngr.tex not found)
+(output written to ../output/tables/appendix/app_hiring_rank_regs_mngr.tex)
+
+----------------------------------------------------------------------------------------
+                 (1)          (2)          (3)          (4)          (5)          (6)   
+           Structu~0    Structu~1     Combined    Structu~0    Structu~1     Combined   
+----------------------------------------------------------------------------------------
+Str.. Mg~.                              -1.111***                              -1.221***
+                                       (0.089)                                (0.215)   
+Rank           0.749***     1.411***     1.411***     0.750***     1.409***     1.410***
+             (0.002)      (0.003)      (0.003)      (0.002)      (0.003)      (0.003)   
+Rank Sq.       0.003***    -0.004***    -0.004***     0.003***    -0.004***    -0.004***
+             (0.000)      (0.000)      (0.000)      (0.000)      (0.000)      (0.000)   
+Str.. X ~k                              -0.662***                              -0.660***
+                                       (0.004)                                (0.004)   
+Str.. X ~.                               0.007***                               0.007***
+                                       (0.000)                                (0.000)   
+Constant      -0.500***     0.612***     0.612***    -0.674*       0.999**      0.926** 
+             (0.060)      (0.065)      (0.065)      (0.269)      (0.343)      (0.350)   
+Year con~s    \cmark       \cmark       \cmark       \cmark       \cmark       \cmark   
+Firm \& ~s                                           \cmark       \cmark       \cmark   
+----------------------------------------------------------------------------------------
+N               2758         1735         4493         2758         1735         4493   
+Firms            209          330          539          209          330          539   
+----------------------------------------------------------------------------------------
+
+. 
+. 
+. 
+. 
+. capture log close

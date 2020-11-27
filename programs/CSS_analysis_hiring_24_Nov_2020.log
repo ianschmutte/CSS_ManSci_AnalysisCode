@@ -1,0 +1,387 @@
+------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\CSS_analysis
+> _hiring_24_Nov_2020.log
+  log type:  text
+ opened on:  24 Nov 2020, 19:17:14
+
+. 
+. /* install any packages locally */
+. sysdir set PERSONAL "$adobase/ado/personal"
+
+. sysdir set PLUS     "$adobase/ado/plus"
+
+. sysdir set SITE     "$adobase/ado/site"
+
+. 
+. /* See https://www.stata.com/manuals13/pcreturn.pdf#pcreturn */
+. local variant = cond(c(MP),"MP",cond(c(SE),"SE",c(flavor)) )  
+
+. 
+. di "=== SYSTEM DIAGNOSTICS ==="
+=== SYSTEM DIAGNOSTICS ===
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 15.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 03 Feb 2020
+
+. di "Variant:       `variant'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    4
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. di "=========================="
+==========================
+
+. 
+end of do-file
+
+. 
+. pause on
+
+. set more off
+
+. set linesize 120                                                                                                      
+>  
+
+. 
+. /* %*************************************************************************** */
+. 
+. *-----------------------------------------------------------------
+. * LORENZ CURVE (All)
+. *-----------------------------------------------------------------
+. {
+. use "${inpath}/WMS_RAIS_flow_microdata.dta", clear
+. 
+. 
+. local num_pe_quantiles = 100
+. local mgmt_group_type formal
+. foreach var in management {
+  2.         keep if hire==1 & sep==0
+  3.         cap drop formal
+  4.         gen formal = (`var' >= 3)
+  5.         xtile pe_q = akm_pe, nq(`num_pe_quantiles')
+  6.         }
+(1,369,755 observations deleted)
+. pctile pct_formal = pe_q if formal==1, nq(100) genp(percent_formal)
+. pctile pct_informal = pe_q if formal==0, nq(100) genp(percent_informal) 
+. /*This ingenious hack is necessary to add (0,0) and (100,100) to the plotted data.
+> All credit (blame?) to Daniela.*/
+. /* drop if pct==. 
+> qui ta pct
+> set obs `=r(N)+2'
+> gen N = `r(N)'
+> replace pct=0 in `=r(N)+1'
+> replace percent=0 in `=r(N)+1'
+> replace pct=100 in `=r(N)+2'
+> replace percent=100 in `=r(N)+2'
+> sort percent */
+. 
+. twoway (line percent_formal pct_formal, lcolor(navy) lwidth(thick) lpattern(solid)) ///
+>        (line percent_informal pct_informal, lcolor(green) lwidth(thick) lpattern(longdash)) ///
+>        (line pct_formal pct_formal, lcolor(black)  lpattern(shortdash)), ///
+>         plotregion(margin(zero) fcolor(white) lcolor(black) ifcolor(white) ilcolor(black)) ///
+>         ylabel(, labsize(medium) tlcolor(white) nogrid)  ///
+>         xlabel(0(20)100, labsize(medsmall) tlcolor(white) nogrid) ///
+>         ytitle("Percentile rank of hired person ") ///
+>         xtitle("Percentile in hired person quality distribution") ///
+>         graphregion(fcolor(white) lcolor(white) ifcolor(white) ilcolor(white)) ///
+>         legend(off) xsize(4) ysize(4) ///
+>         text(80 40 "{bf:unstructured management }", color(green)) ///
+>         text(20 60 "{bf:structured management }", color(navy)) ///
+>         name(lorenz_all, replace)
+. 
+. graph save ${figpath}/fig_hiring_lorenz_all.gph , replace
+(note: file ../output/figures/fig_hiring_lorenz_all.gph not found)
+(file ../output/figures/fig_hiring_lorenz_all.gph saved)
+. graph export ${figpath}/fig_hiring_lorenz_all.pdf , as(pdf) replace
+(file ../output/figures/fig_hiring_lorenz_all.pdf written in PDF format)
+. 
+. /*display data used in figures*/
+. list pct_formal percent_formal pct_informal percent_informal if pct_formal ~=.
+
+        +-------------------------------------------+
+        | pct_fo~l   percen..   pct_in~l   percen.. |
+        |-------------------------------------------|
+     1. |        2          1          1          1 |
+     2. |        3          2          2          2 |
+     3. |        4          3          3          3 |
+     4. |        5          4          4          4 |
+     5. |        6          5          5          5 |
+        |-------------------------------------------|
+     6. |        7          6          6          6 |
+     7. |        8          7          7          7 |
+     8. |        9          8          8          8 |
+     9. |       10          9          9          9 |
+    10. |       11         10         10         10 |
+        |-------------------------------------------|
+    11. |       12         11         11         11 |
+    12. |       13         12         12         12 |
+    13. |       14         13         13         13 |
+    14. |       15         14         14         14 |
+    15. |       16         15         15         15 |
+        |-------------------------------------------|
+    16. |       18         16         16         16 |
+    17. |       19         17         17         17 |
+    18. |       20         18         18         18 |
+    19. |       21         19         19         19 |
+    20. |       22         20         20         20 |
+        |-------------------------------------------|
+    21. |       23         21         21         21 |
+    22. |       24         22         22         22 |
+    23. |       25         23         23         23 |
+    24. |       26         24         23         24 |
+    25. |       27         25         24         25 |
+        |-------------------------------------------|
+    26. |       28         26         25         26 |
+    27. |       30         27         26         27 |
+    28. |       31         28         27         28 |
+    29. |       32         29         28         29 |
+    30. |       33         30         29         30 |
+        |-------------------------------------------|
+    31. |       34         31         30         31 |
+    32. |       35         32         31         32 |
+    33. |       36         33         32         33 |
+    34. |       37         34         33         34 |
+    35. |       38         35         34         35 |
+        |-------------------------------------------|
+    36. |       40         36         35         36 |
+    37. |       41         37         36         37 |
+    38. |       42         38         37         38 |
+    39. |       43         39         38         39 |
+    40. |       44         40         39         40 |
+        |-------------------------------------------|
+    41. |       45         41         40         41 |
+    42. |       46         42         40         42 |
+    43. |       47         43         41         43 |
+    44. |       48         44         42         44 |
+    45. |       50         45         43         45 |
+        |-------------------------------------------|
+    46. |       51         46         44         46 |
+    47. |       52         47         45         47 |
+    48. |       53         48         46         48 |
+    49. |       54         49         47         49 |
+    50. |       55         50         48         50 |
+        |-------------------------------------------|
+    51. |       56         51         49         51 |
+    52. |       57         52         50         52 |
+    53. |       58         53         51         53 |
+    54. |       59         54         52         54 |
+    55. |       60         55         53         55 |
+        |-------------------------------------------|
+    56. |       61         56         54         56 |
+    57. |       63         57         54         57 |
+    58. |       64         58         55         58 |
+    59. |       65         59         56         59 |
+    60. |       66         60         57         60 |
+        |-------------------------------------------|
+    61. |       67         61         58         61 |
+    62. |       68         62         59         62 |
+    63. |       69         63         60         63 |
+    64. |       70         64         61         64 |
+    65. |       71         65         62         65 |
+        |-------------------------------------------|
+    66. |       72         66         63         66 |
+    67. |       73         67         64         67 |
+    68. |       74         68         65         68 |
+    69. |       75         69         66         69 |
+    70. |       76         70         67         70 |
+        |-------------------------------------------|
+    71. |       77         71         68         71 |
+    72. |       78         72         69         72 |
+    73. |       79         73         70         73 |
+    74. |       80         74         71         74 |
+    75. |       81         75         72         75 |
+        |-------------------------------------------|
+    76. |       82         76         73         76 |
+    77. |       83         77         74         77 |
+    78. |       84         78         75         78 |
+    79. |       85         79         76         79 |
+    80. |       86         80         77         80 |
+        |-------------------------------------------|
+    81. |       87         81         78         81 |
+    82. |       88         82         79         82 |
+    83. |       89         83         80         83 |
+    84. |       89         84         81         84 |
+    85. |       90         85         82         85 |
+        |-------------------------------------------|
+    86. |       91         86         83         86 |
+    87. |       92         87         84         87 |
+    88. |       93         88         85         88 |
+    89. |       93         89         86         89 |
+    90. |       94         90         87         90 |
+        |-------------------------------------------|
+    91. |       95         91         88         91 |
+    92. |       95         92         89         92 |
+    93. |       96         93         90         93 |
+    94. |       97         94         92         94 |
+    95. |       97         95         93         95 |
+        |-------------------------------------------|
+    96. |       98         96         94         96 |
+    97. |       99         97         96         97 |
+    98. |       99         98         97         98 |
+    99. |      100         99         99         99 |
+        +-------------------------------------------+
+. 
+. }
+
+. 
+. 
+. *-----------------------------------------------------------------
+. * LORENZ CURVE (Production Workers)
+. *-----------------------------------------------------------------
+. {
+. use "${inpath}/WMS_RAIS_flow_microdata.dta", clear
+. keep if occ_labr == 1
+(41,208 observations deleted)
+. 
+. local num_pe_quantiles = 100
+. local mgmt_group_type formal
+. foreach var in management{
+  2.         keep if hire==1 & sep==0
+  3.     cap drop formal
+  4.         gen formal = (`var' >= 3)
+  5.         xtile pe_q = akm_pe, nq(`num_pe_quantiles')
+  6.         }
+(1,333,818 observations deleted)
+. pctile pct_formal = pe_q if formal==1, nq(100) genp(percent_formal)
+. pctile pct_informal = pe_q if formal==0, nq(100) genp(percent_informal) 
+. 
+. /*This ingenious hack is necessary to add (0,0) and (100,100) to the plotted data.
+> All credit to Daniela.*/
+. // drop if pct==. | percent==.
+. // qui ta pct
+. // set obs `=r(N)+2'
+. // gen N = `r(N)'
+. // replace pct=0 in `=r(N)+1'
+. // replace percent=0 in `=r(N)+1'
+. // replace pct=100 in `=r(N)+2'
+. // replace percent=100 in `=r(N)+2'
+. // sort percent
+. 
+. * line y x
+. * y: pct rank within firm type (percent_formal/informal)
+. * x: pct rank across full distribution (pct_formal/informal)
+. list percent_formal pct_formal percent_informal  pct_informal  if pct_formal ~=. & percent_formal==50 
+
+        +-------------------------------------------+
+        | percen..   pct_fo~l   percen..   pct_in~l |
+        |-------------------------------------------|
+    50. |       50         54         50         48 |
+        +-------------------------------------------+
+. 
+. twoway (line percent_formal pct_formal, lcolor(navy) lwidth(thick) lpattern(solid)) ///
+>        (line percent_informal pct_informal, lcolor(green) lwidth(thick) lpattern(longdash)) ///
+>        (line pct_formal pct_formal, lcolor(black)  lpattern(shortdash)) ///
+>         (pci 50 0 50 48, lwidth(.8) lcolor(green)) ///
+>         (pci 0  48 50 48, lwidth(.8) lcolor(green)) ///
+>         (pci 50 48 50 56, lwidth(.8) lcolor(navy)) ///
+>         (pci 0 56 50 56, lwidth(.8) lcolor(navy)) ///
+>         , ///
+>         plotregion(margin(zero) fcolor(white) lcolor(black) ifcolor(white) ilcolor(black)) ///
+>         ylabel(0(25)100, labsize(medium) tlcolor(white) nogrid)  ///
+>         xlabel(0(25)100, labsize(medsmall) tlcolor(white) nogrid) ///
+>         ytitle("Percentile rank of hired production worker"  "within firm type") ///
+>         xtitle("Percentile rank of hired production worker"  "in full distribution") ///
+>         graphregion(fcolor(white) lcolor(white) ifcolor(white) ilcolor(white)) ///
+>         legend(off) xsize(4) ysize(4) ///
+>         text(85 60 "{bf:unstructured}", color(green)) ///
+>         text(80 60 "{bf:management}", color(green)) ///
+>         text(60 85 "{bf:structured}", color(navy)) ///
+>         text(55 85 "{bf:management}", color(navy)) ///
+> name(lorenz_prod, replace)
+. 
+. graph save ${figpath}/fig_hiring_lorenz_labr.gph , replace
+(note: file ../output/figures/fig_hiring_lorenz_labr.gph not found)
+(file ../output/figures/fig_hiring_lorenz_labr.gph saved)
+. graph export ${figpath}/fig_hiring_lorenz_labr.pdf , as(pdf) replace
+(file ../output/figures/fig_hiring_lorenz_labr.pdf written in PDF format)
+. /*display data used in figures*/
+. }
+
+. *-----------------------------------------------------------------
+. * LORENZ CURVE (Managers)
+. *-----------------------------------------------------------------
+. {
+. // use "${inpath}/WMS_RAIS_linked_microdata.dta", clear
+. use "${inpath}/WMS_RAIS_flow_microdata.dta", clear
+. keep if occ_mngr == 1
+(1,671,933 observations deleted)
+. 
+. local num_pe_quantiles = 100
+. local mgmt_group_type formal
+. foreach var in management {
+  2.         keep if hire==1 & sep==0
+  3.     cap drop formal
+  4.         gen formal = (`var' >= 3)
+  5.         xtile pe_q = akm_pe, nq(`num_pe_quantiles')
+  6.         }
+(35,937 observations deleted)
+. pctile pct_formal = pe_q if formal==1, nq(100) genp(percent_formal)
+. pctile pct_informal = pe_q if formal==0, nq(100) genp(percent_informal) 
+. 
+. * line y x
+. * y: pct rank within firm type (percent_formal/informal)
+. * x: pct rank across full distribution (pct_formal/informal)
+. list percent_formal pct_formal percent_informal  pct_informal  if pct_formal ~=. & percent_formal==50 
+
+      +-------------------------------------------+
+      | percen..   pct_fo~l   percen..   pct_in~l |
+      |-------------------------------------------|
+  50. |       50         57         50         40 |
+      +-------------------------------------------+
+. 
+. /*This ingenious hack is necessary to add (0,0) and (100,100) to the plotted data.
+> All credit to Daniela.*/
+. // drop if pct==. | percent==.
+. // qui ta pct
+. // set obs `=r(N)+2'
+. // gen N = `r(N)'
+. // replace pct=0 in `=r(N)+1'
+. // replace percent=0 in `=r(N)+1'
+. // replace pct=100 in `=r(N)+2'
+. // replace percent=100 in `=r(N)+2'
+. // sort percent
+. 
+. twoway (line percent_formal pct_formal, lcolor(navy) lwidth(thick) lpattern(solid)) ///
+>        (line percent_informal pct_informal, lcolor(green) lwidth(thick) lpattern(longdash)) ///
+>        (line pct_formal pct_formal, lcolor(black)  lpattern(shortdash)) ///
+>         (pci 50 0 50 42, lwidth(.8) lcolor(green)) ///
+>         (pci 0  42 50 42, lwidth(.8) lcolor(green)) ///
+>         (pci 50 42 50 59, lwidth(.8) lcolor(navy)) ///
+>         (pci 0 59 50 59, lwidth(.8) lcolor(navy)) ///
+>         , ///
+>         plotregion(margin(zero) fcolor(white) lcolor(black) ifcolor(white) ilcolor(black)) ///
+>         ylabel(0(25)100, labsize(medium) tlcolor(white) nogrid)  ///
+>         xlabel(0(25)100, labsize(medsmall) tlcolor(white) nogrid) ///
+>         ytitle("Percentile rank of hired manager"  "within firm type") ///
+>         xtitle("Percentile rank of hired manager"  "in full distribution") ///
+>         graphregion(fcolor(white) lcolor(white) ifcolor(white) ilcolor(white)) ///
+>         legend(off) xsize(4) ysize(4) ///
+>         text(85 55 "{bf:unstructured}", color(green)) ///
+>         text(80 55 "{bf:management}", color(green)) ///
+>         text(60 85 "{bf:structured}", color(navy)) ///
+>         text(55 85 "{bf:management}", color(navy)) ///
+>         name(lorenz_mngr, replace)
+. 
+. 
+. graph save ${figpath}/fig_hiring_lorenz_mngr.gph , replace
+(note: file ../output/figures/fig_hiring_lorenz_mngr.gph not found)
+(file ../output/figures/fig_hiring_lorenz_mngr.gph saved)
+. graph export ${figpath}/fig_hiring_lorenz_mngr.pdf , as(pdf) replace
+(file ../output/figures/fig_hiring_lorenz_mngr.pdf written in PDF format)
+. /*display data used in figures*/
+.  }
+
+. 
+. 
+. capture log close

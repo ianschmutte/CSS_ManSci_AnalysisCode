@@ -1,0 +1,82 @@
+------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\CSS_emp_shar
+> es_24_Nov_2020.log
+  log type:  text
+ opened on:  24 Nov 2020, 19:18:23
+
+. 
+. /* install any packages locally */
+. sysdir set PERSONAL "$adobase/ado/personal"
+
+. sysdir set PLUS     "$adobase/ado/plus"
+
+. sysdir set SITE     "$adobase/ado/site"
+
+. 
+. /* See https://www.stata.com/manuals13/pcreturn.pdf#pcreturn */
+. local variant = cond(c(MP),"MP",cond(c(SE),"SE",c(flavor)) )  
+
+. 
+. di "=== SYSTEM DIAGNOSTICS ==="
+=== SYSTEM DIAGNOSTICS ===
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 15.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 03 Feb 2020
+
+. di "Variant:       `variant'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    4
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. di "=========================="
+==========================
+
+. 
+end of do-file
+
+. 
+. pause on
+
+. set more off
+
+. set linesize 120                                                                                                      
+>  
+
+. 
+. /* %*************************************************************************** */
+. *-----------------------------------------------------------------
+. * Appendix: EMPLOYMENT SHARES 
+. *-----------------------------------------------------------------
+. use "${inpath}/WMS_RAIS_flow_microdata.dta", clear
+
+. 
+.         collapse formal, by(year)
+
+. 
+.     format %4.0g formal
+
+.         
+.         graph bar formal, over(year) ///
+>                 ylabel(0(.25)1) ytitle("Employment share") ///
+>                 graphregion(fcolor(white) lcolor(white) ifcolor(white) ilcolor(white))
+
+.         graph save "${figpath}/fig_emp_shares.gph", replace
+(note: file ../output/figures/fig_emp_shares.gph not found)
+(file ../output/figures/fig_emp_shares.gph saved)
+
+.         graph export "${figpath}/fig_emp_shares.pdf", as(pdf) replace 
+(file ../output/figures/fig_emp_shares.pdf written in PDF format)
+
+. 
+. cap log close

@@ -1,0 +1,318 @@
+------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\CSS_analysis
+> _stayers_24_Nov_2020.log
+  log type:  text
+ opened on:  24 Nov 2020, 19:17:36
+
+. 
+. /* install any packages locally */
+. sysdir set PERSONAL "$adobase/ado/personal"
+
+. sysdir set PLUS     "$adobase/ado/plus"
+
+. sysdir set SITE     "$adobase/ado/site"
+
+. 
+. /* See https://www.stata.com/manuals13/pcreturn.pdf#pcreturn */
+. local variant = cond(c(MP),"MP",cond(c(SE),"SE",c(flavor)) )  
+
+. 
+. di "=== SYSTEM DIAGNOSTICS ==="
+=== SYSTEM DIAGNOSTICS ===
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 15.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 03 Feb 2020
+
+. di "Variant:       `variant'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    4
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. di "=========================="
+==========================
+
+. 
+end of do-file
+
+. 
+. pause on
+
+. set more off
+
+. set linesize 120                                                                                                      
+>  
+
+. 
+. /* %*************************************************************************** */
+. *-----------------------------------------------------------------
+. * STAYERS OVER TIME, BY THETA-HAT AND MANAGEMENT (All)
+. *-----------------------------------------------------------------
+. {
+. use "${inpath}/WMS_RAIS_flow_microdata.dta", clear
+. 
+. local num_pe_quantiles = 5
+. 
+.         keep if hire==0 & sep==0
+(821,001 observations deleted)
+.         forvalues yr = 2008/2013{
+  2.                 xtile pe_`yr' = akm_pe if year==`yr', nq(`num_pe_quantiles')
+  3.                 gen pe_high`yr' = pe_`yr'==`num_pe_quantiles'
+  4.                 replace pe_high`yr' = . if year~=`yr'
+  5.                 gen pe_low`yr' = pe_`yr'==1
+  6.                 replace pe_low`yr' = . if year~=`yr'
+  7.                 gen pe_mid`yr' = (pe_`yr'~=1 & pe_`yr'~=`num_pe_quantiles')
+  8.                 replace pe_mid`yr' = . if year~=`yr'
+  9.         }
+(751,941 real changes made, 751,941 to missing)
+(751,941 real changes made, 751,941 to missing)
+(751,941 real changes made, 751,941 to missing)
+(750,369 real changes made, 750,369 to missing)
+(750,369 real changes made, 750,369 to missing)
+(750,369 real changes made, 750,369 to missing)
+(746,340 real changes made, 746,340 to missing)
+(746,340 real changes made, 746,340 to missing)
+(746,340 real changes made, 746,340 to missing)
+(739,430 real changes made, 739,430 to missing)
+(739,430 real changes made, 739,430 to missing)
+(739,430 real changes made, 739,430 to missing)
+(735,629 real changes made, 735,629 to missing)
+(735,629 real changes made, 735,629 to missing)
+(735,629 real changes made, 735,629 to missing)
+(736,991 real changes made, 736,991 to missing)
+(736,991 real changes made, 736,991 to missing)
+(736,991 real changes made, 736,991 to missing)
+. 
+. collapse (mean) pe_high* pe_low* pe_mid*, by(formal)
+. reshape long pe_high pe_low pe_mid, i(formal) j(year)
+(note: j = 2008 2009 2010 2011 2012 2013)
+
+Data                               wide   ->   long
+-----------------------------------------------------------------------------
+Number of obs.                        2   ->      12
+Number of variables                  19   ->       5
+j variable (6 values)                     ->   year
+xij variables:
+pe_high2008 pe_high2009 ... pe_high2013   ->   pe_high
+   pe_low2008 pe_low2009 ... pe_low2013   ->   pe_low
+   pe_mid2008 pe_mid2009 ... pe_mid2013   ->   pe_mid
+-----------------------------------------------------------------------------
+. 
+. genstack pe_low pe_mid pe_high, generate(c_) double 
+. 
+. lab define formal 0 "Unstructured management" 1 "Structured management" 
+. la val formal formal
+. 
+. 
+. graph twoway    (area c_pe_high year, color(navy*.7)) ///
+>                 (area c_pe_mid year, color(navy*.1)) ///
+>                 (area c_pe_low year, color(navy*.4)), by(formal) ///
+>         plotregion(margin(medium) fcolor(white) lcolor(white) ifcolor(white) ilcolor(white)) ///
+>         yscale(noline) ylabel(, labsize(medium) tlcolor(white) nogrid)  ///
+>         xlabel(2008(1)2013, labsize(medsmall) tlcolor(white) nogrid) ///
+>         ytitle("Employment stock share (annual)") ///
+>         subtitle(, box bexpand size(medium) fcolor(white) lcolor(black)) ///
+>         text(.1 2011 "{bf:low quality}") ///
+>         text(.92 2011 "{bf:high quality}") ///
+>         by(formal, col(3) legend(off) ///
+>         graphregion(fcolor(white) lcolor(white) ifcolor(white) ilcolor(white)) ///
+>         note("") ///
+>         ) /// * end of the "by" command
+>         name(e3pA, replace)
+.         
+.         * local figpath ./output/figures
+.     graph save ${figpath}/fig_stayer_shares_all.gph, replace
+(note: file ../output/figures/fig_stayer_shares_all.gph not found)
+(file ../output/figures/fig_stayer_shares_all.gph saved)
+.         graph export ${figpath}/fig_stayer_shares_all.pdf , as(pdf) replace
+(file ../output/figures/fig_stayer_shares_all.pdf written in PDF format)
+. }
+
+. *-----------------------------------------------------------------
+. * STAYERS OVER TIME, BY THETA-HAT AND MANAGEMENT (Production)
+. *-----------------------------------------------------------------
+. {
+. use "${inpath}/WMS_RAIS_flow_microdata.dta", clear
+. 
+. local num_pe_quantiles = 5
+. local mgmt_group_type formal
+. 
+. keep if hire==0 & sep==0 & occ_labr == 1
+(848,944 observations deleted)
+. forvalues yr = 2008/2013{
+  2.         xtile pe_`yr' = akm_pe if year==`yr', nq(`num_pe_quantiles')
+  3.         gen pe_high`yr' = pe_`yr'==`num_pe_quantiles'
+  4.         replace pe_high`yr' = . if year~=`yr'
+  5.         gen pe_low`yr' = pe_`yr'==1
+  6.         replace pe_low`yr' = . if year~=`yr'
+  7.         gen pe_mid`yr' = (pe_`yr'~=1 & pe_`yr'~=`num_pe_quantiles')
+  8.         replace pe_mid`yr' = . if year~=`yr'
+  9. }
+(728,348 real changes made, 728,348 to missing)
+(728,348 real changes made, 728,348 to missing)
+(728,348 real changes made, 728,348 to missing)
+(726,594 real changes made, 726,594 to missing)
+(726,594 real changes made, 726,594 to missing)
+(726,594 real changes made, 726,594 to missing)
+(722,880 real changes made, 722,880 to missing)
+(722,880 real changes made, 722,880 to missing)
+(722,880 real changes made, 722,880 to missing)
+(716,218 real changes made, 716,218 to missing)
+(716,218 real changes made, 716,218 to missing)
+(716,218 real changes made, 716,218 to missing)
+(712,653 real changes made, 712,653 to missing)
+(712,653 real changes made, 712,653 to missing)
+(712,653 real changes made, 712,653 to missing)
+(714,292 real changes made, 714,292 to missing)
+(714,292 real changes made, 714,292 to missing)
+(714,292 real changes made, 714,292 to missing)
+. 
+. collapse (mean) pe_high* pe_low* pe_mid*, by(`mgmt_group_type')
+. reshape long pe_high pe_low pe_mid, i(`mgmt_group_type') j(year)
+(note: j = 2008 2009 2010 2011 2012 2013)
+
+Data                               wide   ->   long
+-----------------------------------------------------------------------------
+Number of obs.                        2   ->      12
+Number of variables                  19   ->       5
+j variable (6 values)                     ->   year
+xij variables:
+pe_high2008 pe_high2009 ... pe_high2013   ->   pe_high
+   pe_low2008 pe_low2009 ... pe_low2013   ->   pe_low
+   pe_mid2008 pe_mid2009 ... pe_mid2013   ->   pe_mid
+-----------------------------------------------------------------------------
+. 
+. genstack pe_low pe_mid pe_high, generate(c_) double 
+. 
+. lab define formal 0 "Unstructured management" 1 "Structured management" 
+. la val formal formal
+. 
+. 
+. local mgmt_group_type formal
+. graph twoway    (area c_pe_high year, color(navy*.7)) ///
+>                 (area c_pe_mid year, color(navy*.1)) ///
+>                 (area c_pe_low year, color(navy*.4)), ///
+>         plotregion(margin(medium) fcolor(white) lcolor(white) ifcolor(white) ilcolor(white)) ///
+>         yscale(noline) ylabel(0(.5)1, labsize(medium) tlcolor(white) nogrid)  ///
+>         xlabel(2008(1)2013, labsize(medsmall) tlcolor(white) nogrid) ///
+>         ytitle("Employment stock share (annual)") ///
+>         subtitle(, box bexpand size(medium) fcolor(white) lcolor(black)) ///
+>         text(.1 2011 "{bf:low quality}") ///
+>         text(.92 2011 "{bf:high quality}") ///
+>         by(`mgmt_group_type', col(3) legend(off) ///
+>         graphregion(fcolor(white) lcolor(white) ifcolor(white) ilcolor(white)) ///
+>         note("") ///
+>         ) /// * end of the "by" command
+>         name(e3pA, replace)
+.         
+.     graph save ${figpath}/fig_stayer_shares_labr.gph, replace
+(note: file ../output/figures/fig_stayer_shares_labr.gph not found)
+(file ../output/figures/fig_stayer_shares_labr.gph saved)
+.         graph export ${figpath}/fig_stayer_shares_labr.pdf , as(pdf) replace
+(file ../output/figures/fig_stayer_shares_labr.pdf written in PDF format)
+. 
+. }
+
+. *-----------------------------------------------------------------
+. * STAYERS OVER TIME, BY THETA-HAT AND MANAGEMENT (Manager)
+. *-----------------------------------------------------------------
+. {
+. use "${inpath}/WMS_RAIS_flow_microdata.dta", clear
+. 
+. local num_pe_quantiles = 5
+. local mgmt_group_type formal
+. 
+. foreach var in management {
+  2.         keep if hire==0 & sep==0 & occ_mngr == 1
+  3.         forvalues yr = 2008/2013{
+  4.                 xtile pe_`yr' = akm_pe if year==`yr', nq(`num_pe_quantiles')
+  5.                 gen pe_high`yr' = pe_`yr'==`num_pe_quantiles'
+  6.                 replace pe_high`yr' = . if year~=`yr'
+  7.                 gen pe_low`yr' = pe_`yr'==1
+  8.                 replace pe_low`yr' = . if year~=`yr'
+  9.                 gen pe_mid`yr' = (pe_`yr'~=1 & pe_`yr'~=`num_pe_quantiles')
+ 10.                 replace pe_mid`yr' = . if year~=`yr'
+ 11.         }
+ 12. }
+(1,685,198 observations deleted)
+(23,593 real changes made, 23,593 to missing)
+(23,593 real changes made, 23,593 to missing)
+(23,593 real changes made, 23,593 to missing)
+(23,775 real changes made, 23,775 to missing)
+(23,775 real changes made, 23,775 to missing)
+(23,775 real changes made, 23,775 to missing)
+(23,460 real changes made, 23,460 to missing)
+(23,460 real changes made, 23,460 to missing)
+(23,460 real changes made, 23,460 to missing)
+(23,212 real changes made, 23,212 to missing)
+(23,212 real changes made, 23,212 to missing)
+(23,212 real changes made, 23,212 to missing)
+(22,976 real changes made, 22,976 to missing)
+(22,976 real changes made, 22,976 to missing)
+(22,976 real changes made, 22,976 to missing)
+(22,699 real changes made, 22,699 to missing)
+(22,699 real changes made, 22,699 to missing)
+(22,699 real changes made, 22,699 to missing)
+. collapse (mean) pe_high* pe_low* pe_mid*, by(`mgmt_group_type')
+. reshape long pe_high pe_low pe_mid, i(`mgmt_group_type') j(year)
+(note: j = 2008 2009 2010 2011 2012 2013)
+
+Data                               wide   ->   long
+-----------------------------------------------------------------------------
+Number of obs.                        2   ->      12
+Number of variables                  19   ->       5
+j variable (6 values)                     ->   year
+xij variables:
+pe_high2008 pe_high2009 ... pe_high2013   ->   pe_high
+   pe_low2008 pe_low2009 ... pe_low2013   ->   pe_low
+   pe_mid2008 pe_mid2009 ... pe_mid2013   ->   pe_mid
+-----------------------------------------------------------------------------
+. 
+. genstack pe_low pe_mid pe_high, generate(c_) double 
+. 
+. lab define formal 0 "Unstructured management" 1 "Structured management" 
+. la val formal formal
+. 
+. 
+. local mgmt_group_type formal
+. graph twoway    (area c_pe_high year, color(navy*.7)) ///
+>                 (area c_pe_mid year, color(navy*.1)) ///
+>                 (area c_pe_low year, color(navy*.4)), ///
+>         plotregion(margin(medium) fcolor(white) lcolor(white) ifcolor(white) ilcolor(white)) ///
+>         yscale(noline) ylabel(, labsize(medium) tlcolor(white) nogrid)  ///
+>         xlabel(2008(1)2013, labsize(medsmall) tlcolor(white) nogrid) ///
+>         ytitle("Employment stock share (annual)") ///
+>         subtitle(, box bexpand size(medium) fcolor(white) lcolor(black)) ///
+>         text(.1 2011 "{bf:low quality}") ///
+>         text(.92 2011 "{bf:high quality}") ///
+>         by(`mgmt_group_type', col(3) legend(off) ///
+>         graphregion(fcolor(white) lcolor(white) ifcolor(white) ilcolor(white)) ///
+>         note("") ///
+>         ) /// * end of the "by" command
+>         name(e3pA, replace)
+.         
+.         
+.     graph save ${figpath}/fig_stayer_shares_mngr.gph, replace
+(note: file ../output/figures/fig_stayer_shares_mngr.gph not found)
+(file ../output/figures/fig_stayer_shares_mngr.gph saved)
+.         graph export ${figpath}/fig_stayer_shares_mngr.pdf , as(pdf) replace
+(file ../output/figures/fig_stayer_shares_mngr.pdf written in PDF format)
+. 
+. }
+
+. 
+end of do-file
+
+. global filestub "CSS_emp_shares"
+
+. capture log close

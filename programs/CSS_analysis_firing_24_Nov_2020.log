@@ -1,0 +1,114 @@
+------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\CSS_analysis
+> _firing_24_Nov_2020.log
+  log type:  text
+ opened on:  24 Nov 2020, 19:15:21
+
+. 
+. /* install any packages locally */
+. sysdir set PERSONAL "$adobase/ado/personal"
+
+. sysdir set PLUS     "$adobase/ado/plus"
+
+. sysdir set SITE     "$adobase/ado/site"
+
+. 
+. /* See https://www.stata.com/manuals13/pcreturn.pdf#pcreturn */
+. local variant = cond(c(MP),"MP",cond(c(SE),"SE",c(flavor)) )  
+
+. 
+. di "=== SYSTEM DIAGNOSTICS ==="
+=== SYSTEM DIAGNOSTICS ===
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 15.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 03 Feb 2020
+
+. di "Variant:       `variant'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    4
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. di "=========================="
+==========================
+
+. 
+end of do-file
+
+. 
+. pause on
+
+. set more off
+
+. set linesize 120                                                                                                      
+>  
+
+. 
+. /* %*************************************************************************** */
+. *-----------------------------------------------------------------
+. * "FIRING" RATES -- BINSCATTER
+. *-----------------------------------------------------------------
+. {
+. // use "${inpath}/WMS_RAIS_linked_microdata.dta", clear
+. use "${inpath}/WMS_RAIS_flow_microdata.dta", clear
+. 
+. /*standardize the worker effects relative to the WMS-attached stayer sample*/
+. egen std_pe = std(akm_pe)
+(463674 missing values generated)
+. replace akm_pe = std_pe
+(1,249,467 real changes made)
+. drop std_pe
+. 
+. gen reg_grp = real(substr(state,1,1))
+(22 missing values generated)
+. 
+. // global ctrl i.year male race_* i.educ_best
+. global ctrl i.year tenure_months male race_* i.educ_best lemp lfirmage i.compet_cat i.own_cat i.reg_grp
+. 
+. 
+. 
+. 
+. binscatter fire akm_pe if occ_labr ==1, ///
+>         controls(${ctrl}) absorb(sic2) by(formal) nq(50) line(none) ///
+>         msymbols(Th O) xlab(-2(1)6) ylab(.05(.05).2)  ytitle("Firing rate") xtitle("Worker quality") ///
+>         legend(ring(0) pos(4) col(1) label(1 "Unstructured management") label(2 "Structured management") region(lcolor
+> (white))) ///
+>         title("Non-managers") name(bs_labr, replace)
+.         
+. binscatter fire akm_pe if occ_mngr ==1, ///
+>         controls(${ctrl}) absorb(sic2) by(formal) nq(50) line(none) ///
+>         msymbols(Th O) xlab(-2(1)6) ylab()  ytitle("Firing rate") xtitle("Worker quality") ///
+>         legend(ring(0) pos(4) col(1) label(1 "Unstructured management") label(2 "Structured management") region(lcolor
+> (white))) ///
+>         title("Managers") name(bs_mngr, replace)
+.         
+.         
+. graph combine bs_mngr bs_labr, ycommon  ///
+>         graphregion(fcolor(white) lcolor(white) ifcolor(white) ilcolor(white)) 
+. 
+. graph save ${figpath}/fig_firing_binscatter.gph, replace
+(note: file ../output/figures/fig_firing_binscatter.gph not found)
+(file ../output/figures/fig_firing_binscatter.gph saved)
+. graph export ${figpath}/fig_firing_binscatter.pdf, as(pdf) replace
+(file ../output/figures/fig_firing_binscatter.pdf written in PDF format)
+. 
+. }
+
+. 
+. log close
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\CSS_analysis
+> _firing_24_Nov_2020.log
+  log type:  text
+ closed on:  24 Nov 2020, 19:16:04
+------------------------------------------------------------------------------------------------------------------------

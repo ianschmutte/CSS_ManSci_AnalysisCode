@@ -1,0 +1,795 @@
+------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\CSS_analysis
+> _firing_regression_24_Nov_2020.log
+  log type:  text
+ opened on:  24 Nov 2020, 19:10:30
+
+. 
+. /* install any packages locally */
+. sysdir set PERSONAL "$adobase/ado/personal"
+
+. sysdir set PLUS     "$adobase/ado/plus"
+
+. sysdir set SITE     "$adobase/ado/site"
+
+. 
+. /* See https://www.stata.com/manuals13/pcreturn.pdf#pcreturn */
+. local variant = cond(c(MP),"MP",cond(c(SE),"SE",c(flavor)) )  
+
+. 
+. di "=== SYSTEM DIAGNOSTICS ==="
+=== SYSTEM DIAGNOSTICS ===
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 15.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 03 Feb 2020
+
+. di "Variant:       `variant'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    4
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. di "=========================="
+==========================
+
+. 
+end of do-file
+
+. 
+. pause on
+
+. set more off
+
+. set linesize 120                                                                                                      
+>  
+
+. 
+. /* %*************************************************************************** */
+. use "${inpath}/WMS_RAIS_flow_microdata.dta", clear
+
+. 
+. /*standardize the worker effects relative to the WMS-attached stayer sample*/
+. egen std_pe = std(akm_pe)
+(463674 missing values generated)
+
+. replace akm_pe = std_pe
+(1,249,467 real changes made)
+
+. drop std_pe
+
+. 
+. gen reg_grp = real(substr(state,1,1))
+(22 missing values generated)
+
+. 
+. *-----------------------------------------------------------------
+. * "FIRING" probability -- regression models
+. *-----------------------------------------------------------------
+. 
+.     global ctrl c.tenure_months i.male i.race_* i.educ_best c.lemp c.lfirmage  i.compet_cat i.own_cat i.reg_grp    
+
+. 
+. /* Regression table version */
+. 
+. 
+. foreach type in mngr labr{
+  2.         qui reg fire c.akm_pe##c.akm_pe i.year if occ_`type'==1 & formal==1, cluster(cnpj)
+  3.     est save ${tabpath}/appendix/CSS_firing_reg_`type'_struc_base.ster, replace
+  4. 
+.     qui reg fire c.akm_pe##c.akm_pe i.year if occ_`type'==1 & formal==0, cluster(cnpj)
+  5.     est save ${tabpath}/appendix/CSS_firing_reg_`type'_unstruc_base.ster, replace
+  6. 
+.     qui reg fire i.formal##(c.akm_pe##c.akm_pe i.year) if occ_`type'==1 , cluster(cnpj)
+  7.     est save ${tabpath}/appendix/CSS_firing_reg_`type'_both_base.ster, replace
+  8. 
+.     qui areg fire c.akm_pe##c.akm_pe i.year ${ctrl} if occ_`type'==1 & formal==1, cluster(cnpj) ab(sic2)
+  9.     est save ${tabpath}/appendix/CSS_firing_reg_`type'_struc_ctrl.ster, replace
+ 10. 
+.     qui areg fire c.akm_pe##c.akm_pe i.year ${ctrl} if occ_`type'==1 & formal==0, cluster(cnpj) ab(sic2)
+ 11.     est save ${tabpath}/appendix/CSS_firing_reg_`type'_unstruc_ctrl.ster, replace
+ 12. 
+.     qui areg fire i.formal##(c.akm_pe##c.akm_pe i.year ${ctrl}) if occ_`type'==1 , cluster(cnpj) ab(sic2)
+ 13.     est save ${tabpath}/appendix/CSS_firing_reg_`type'_both_ctrl.ster, replace
+ 14. 
+. } 
+(note: file ../output/tables/appendix/CSS_firing_reg_mngr_struc_base.ster not found)
+file ../output/tables/appendix/CSS_firing_reg_mngr_struc_base.ster saved
+(note: file ../output/tables/appendix/CSS_firing_reg_mngr_unstruc_base.ster not found)
+file ../output/tables/appendix/CSS_firing_reg_mngr_unstruc_base.ster saved
+(note: file ../output/tables/appendix/CSS_firing_reg_mngr_both_base.ster not found)
+file ../output/tables/appendix/CSS_firing_reg_mngr_both_base.ster saved
+(note: file ../output/tables/appendix/CSS_firing_reg_mngr_struc_ctrl.ster not found)
+file ../output/tables/appendix/CSS_firing_reg_mngr_struc_ctrl.ster saved
+(note: file ../output/tables/appendix/CSS_firing_reg_mngr_unstruc_ctrl.ster not found)
+file ../output/tables/appendix/CSS_firing_reg_mngr_unstruc_ctrl.ster saved
+(note: file ../output/tables/appendix/CSS_firing_reg_mngr_both_ctrl.ster not found)
+file ../output/tables/appendix/CSS_firing_reg_mngr_both_ctrl.ster saved
+(note: file ../output/tables/appendix/CSS_firing_reg_labr_struc_base.ster not found)
+file ../output/tables/appendix/CSS_firing_reg_labr_struc_base.ster saved
+(note: file ../output/tables/appendix/CSS_firing_reg_labr_unstruc_base.ster not found)
+file ../output/tables/appendix/CSS_firing_reg_labr_unstruc_base.ster saved
+(note: file ../output/tables/appendix/CSS_firing_reg_labr_both_base.ster not found)
+file ../output/tables/appendix/CSS_firing_reg_labr_both_base.ster saved
+(note: file ../output/tables/appendix/CSS_firing_reg_labr_struc_ctrl.ster not found)
+file ../output/tables/appendix/CSS_firing_reg_labr_struc_ctrl.ster saved
+(note: file ../output/tables/appendix/CSS_firing_reg_labr_unstruc_ctrl.ster not found)
+file ../output/tables/appendix/CSS_firing_reg_labr_unstruc_ctrl.ster saved
+(note: file ../output/tables/appendix/CSS_firing_reg_labr_both_ctrl.ster not found)
+file ../output/tables/appendix/CSS_firing_reg_labr_both_ctrl.ster saved
+
+. 
+. /*logit models*/
+. 
+.       gen pe_sq = akm_pe*akm_pe
+(463,674 missing values generated)
+
+.       gen f_pe  = formal*akm_pe
+(463,674 missing values generated)
+
+.       gen f_pe_sq = formal*pe_sq
+(463,674 missing values generated)
+
+. 
+. 
+.  foreach type in mngr labr{
+  2.         eststo: logit fire akm_pe pe_sq i.year if occ_`type'==1 & formal==1, cluster(cnpj)
+  3.      estadd margins, dydx(*) atmeans 
+  4.      estimates save ${tabpath}/appendix/CSS_firing_logit_`type'_struc_base.ster, replace
+  5.      eststo clear
+  6. 
+.      eststo: logit fire akm_pe pe_sq i.year if occ_`type'==1 & formal==0, cluster(cnpj)
+  7.      estadd margins, dydx(*) atmeans
+  8.      estimates save ${tabpath}/appendix/CSS_firing_logit_`type'_unstruc_base.ster, replace
+  9.      eststo clear
+ 10.  }
+
+Iteration 0:   log pseudolikelihood = -6323.2094  
+Iteration 1:   log pseudolikelihood = -6296.1768  
+Iteration 2:   log pseudolikelihood = -6295.8681  
+Iteration 3:   log pseudolikelihood =  -6295.868  
+
+Logistic regression                             Number of obs     =     22,354
+                                                Wald chi2(7)      =      27.16
+                                                Prob > chi2       =     0.0003
+Log pseudolikelihood =  -6295.868               Pseudo R2         =     0.0043
+
+                                 (Std. Err. adjusted for 239 clusters in cnpj)
+------------------------------------------------------------------------------
+             |               Robust
+        fire |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      akm_pe |  -.2233284   .0782505    -2.85   0.004    -.3766966   -.0699602
+       pe_sq |   .0394099   .0133198     2.96   0.003     .0133036    .0655162
+             |
+        year |
+       2009  |   .0314508   .1218074     0.26   0.796    -.2072873    .2701889
+       2010  |  -.4108342     .10746    -3.82   0.000    -.6214519   -.2002166
+       2011  |  -.2687295   .1067713    -2.52   0.012    -.4779975   -.0594615
+       2012  |   -.219789   .1122568    -1.96   0.050    -.4398083    .0002304
+       2013  |  -.1155339    .101034    -1.14   0.253    -.3135568     .082489
+             |
+       _cons |  -2.024459   .1647728   -12.29   0.000    -2.347407    -1.70151
+------------------------------------------------------------------------------
+(est33 stored)
+
+Conditional marginal effects                    Number of obs     =     22,354
+Model VCE    : Robust
+
+Expression   : Pr(fire), predict()
+dy/dx w.r.t. : akm_pe pe_sq 2009.year 2010.year 2011.year 2012.year 2013.year
+at           : akm_pe          =    2.610515 (mean)
+               pe_sq           =    8.589188 (mean)
+               2008.year       =    .1596582 (mean)
+               2009.year       =    .1567952 (mean)
+               2010.year       =    .1563479 (mean)
+               2011.year       =    .1670842 (mean)
+               2012.year       =     .176389 (mean)
+               2013.year       =    .1837255 (mean)
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      akm_pe |  -.0165642   .0058297    -2.84   0.004    -.0279902   -.0051383
+       pe_sq |    .002923   .0009657     3.03   0.002     .0010303    .0048157
+             |
+        year |
+       2009  |   .0027058   .0105175     0.26   0.797     -.017908    .0233197
+       2010  |  -.0295502   .0082279    -3.59   0.000    -.0456766   -.0134239
+       2011  |  -.0204686   .0082421    -2.48   0.013    -.0366229   -.0043143
+       2012  |  -.0170758   .0087334    -1.96   0.051    -.0341929    .0000413
+       2013  |  -.0093637   .0083026    -1.13   0.259    -.0256364     .006909
+------------------------------------------------------------------------------
+Note: dy/dx for factor levels is the discrete change from the base level.
+
+added scalars:
+      e(margins_level) =  95
+e(margins_PT_has_legend) =  0
+e(margins_PT_has_cnotes) =  0
+e(margins_PT_k_ctitles) =  2
+       e(margins_k_at) =  1
+       e(margins_k_by) =  1
+  e(margins_k_predict) =  1
+  e(margins_k_margins) =  0
+          e(margins_N) =  22354
+
+added macros:
+  e(margins_marg_dims) : "_deriv"
+ e(margins_put_tables) : "PT"
+   e(margins_PT_rseps) : "`""' `""' `""' `""' `""' `""' `""' `""' `""'"
+  e(margins_PT_rnotes) : "`""' `""' `""' `""' `""' `""' `""' `""' `""'"
+ e(margins_PT_raligns) : "`"right"' `"right"' `"right"' `"right"' `"level"' `"level"' `"level"' `"level"' `"level"'"
+ e(margins_PT_rtitles) : "`"akm_pe"' `"pe_sq"' `""' `"year"' `"2009"' `"2010"' `"2011"' `"2012"' `"2013"'"
+e(margins_PT_cformats) : "`"%9.0g"' `"%9.0g"' `"%8.2f"' `"%5.3f"' `"%9.0g"' `"%9.0g"'"
+ e(margins_PT_cspans2) : "`"1"' `"1"' `"1"' `"1"' `"2"' `"0"'"
+e(margins_PT_ctitles2) : "`"dy/dx"' `"Std. Err."' `"z"' `"P>|z|"' `"[95% Conf. Interval]"' `""'"
+ e(margins_PT_cspans1) : "`"1"' `"1"' `"1"' `"1"' `"1"' `"1"'"
+e(margins_PT_ctitles1) : "`""' `"Delta-method"' `""' `""' `""' `""'"
+     e(margins_citype) : "normal"
+     e(margins_label3) : "(base)"
+   e(margins_mcmethod) : "noadjust"
+        e(margins_cmd) : "margins"
+    e(margins_cmdline) : "margins , dydx(*) atmeans"
+e(margins_est_cmdline) : "logit fire akm_pe pe_sq i.year if occ_mngr==1 & formal==1, cluster(cnpj)"
+    e(margins_est_cmd) : "logit"
+    e(margins_predict) : "_no_predict"
+ e(margins_emptycells) : "strict"
+     e(margins_atopt1) : "(mean) _factor (mean) _continuous"
+    e(margins_atspec1) : "mean mean mean mean mean mean mean mean"
+   e(margins_atstats1) : "mean mean mean mean mean mean mean mean"
+e(margins_derivatives) : "dy/dx"
+      e(margins_xvars) : "akm_pe pe_sq 2008b.year 2009.year 2010.year 2011.year 2012.year 2013.year"
+ e(margins_expression) : "predict()"
+e(margins_predict1_label) : "Pr(fire)"
+e(margins_predict_label) : "Pr(fire)"
+    e(margins_vcetype) : "Delta-method"
+        e(margins_vce) : "delta"
+e(margins_model_vcetype) : "Robust"
+  e(margins_model_vce) : "cluster"
+      e(margins_title) : "Conditional marginal effects"
+
+added matrices:
+         e(margins_PT) :  9 x 6
+      e(margins_table) :  9 x 8
+          e(margins_b) :  1 x 8
+  e(margins_chainrule) :  1 x 3
+     e(margins_atdims) :  1 x 1
+         e(margins_at) :  1 x 8
+         e(margins_se) :  1 x 8
+   e(margins_Jacobian) :  8 x 9
+      e(margins_error) :  1 x 8
+         e(margins__N) :  1 x 8
+(note: file ../output/tables/appendix/CSS_firing_logit_mngr_struc_base.ster not found)
+file ../output/tables/appendix/CSS_firing_logit_mngr_struc_base.ster saved
+
+Iteration 0:   log pseudolikelihood = -6006.8228  
+Iteration 1:   log pseudolikelihood = -5979.3499  
+Iteration 2:   log pseudolikelihood = -5979.1868  
+Iteration 3:   log pseudolikelihood = -5979.1868  
+
+Logistic regression                             Number of obs     =     15,883
+                                                Wald chi2(7)      =      39.02
+                                                Prob > chi2       =     0.0000
+Log pseudolikelihood = -5979.1868               Pseudo R2         =     0.0046
+
+                                 (Std. Err. adjusted for 438 clusters in cnpj)
+------------------------------------------------------------------------------
+             |               Robust
+        fire |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      akm_pe |  -.1435739   .0498712    -2.88   0.004    -.2413196   -.0458282
+       pe_sq |   .0156113    .011777     1.33   0.185    -.0074711    .0386938
+             |
+        year |
+       2009  |   .0037519   .0914406     0.04   0.967    -.1754683    .1829722
+       2010  |  -.2690621   .0921204    -2.92   0.003    -.4496148   -.0885094
+       2011  |  -.1258242   .1053437    -1.19   0.232     -.332294    .0806455
+       2012  |  -.2283874    .100796    -2.27   0.023    -.4259439   -.0308309
+       2013  |  -.3558306   .1000049    -3.56   0.000    -.5518366   -.1598246
+             |
+       _cons |  -1.607981    .088769   -18.11   0.000    -1.781965   -1.433997
+------------------------------------------------------------------------------
+(est1 stored)
+
+Conditional marginal effects                    Number of obs     =     15,883
+Model VCE    : Robust
+
+Expression   : Pr(fire), predict()
+dy/dx w.r.t. : akm_pe pe_sq 2009.year 2010.year 2011.year 2012.year 2013.year
+at           : akm_pe          =    1.860606 (mean)
+               pe_sq           =    5.689725 (mean)
+               2008.year       =    .1682302 (mean)
+               2009.year       =    .1597305 (mean)
+               2010.year       =    .1633822 (mean)
+               2011.year       =    .1679154 (mean)
+               2012.year       =     .165397 (mean)
+               2013.year       =    .1753447 (mean)
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      akm_pe |  -.0156441    .005384    -2.91   0.004    -.0261966   -.0050917
+       pe_sq |    .001701   .0012816     1.33   0.184    -.0008109     .004213
+             |
+        year |
+       2009  |   .0004618    .011254     0.04   0.967    -.0215956    .0225192
+       2010  |  -.0300155   .0105262    -2.85   0.004    -.0506464   -.0093845
+       2011  |  -.0147846   .0123585    -1.20   0.232     -.039007    .0094377
+       2012  |  -.0258577   .0114953    -2.25   0.024     -.048388   -.0033274
+       2013  |  -.0384583   .0109323    -3.52   0.000    -.0598853   -.0170313
+------------------------------------------------------------------------------
+Note: dy/dx for factor levels is the discrete change from the base level.
+
+added scalars:
+      e(margins_level) =  95
+e(margins_PT_has_legend) =  0
+e(margins_PT_has_cnotes) =  0
+e(margins_PT_k_ctitles) =  2
+       e(margins_k_at) =  1
+       e(margins_k_by) =  1
+  e(margins_k_predict) =  1
+  e(margins_k_margins) =  0
+          e(margins_N) =  15883
+
+added macros:
+  e(margins_marg_dims) : "_deriv"
+ e(margins_put_tables) : "PT"
+   e(margins_PT_rseps) : "`""' `""' `""' `""' `""' `""' `""' `""' `""'"
+  e(margins_PT_rnotes) : "`""' `""' `""' `""' `""' `""' `""' `""' `""'"
+ e(margins_PT_raligns) : "`"right"' `"right"' `"right"' `"right"' `"level"' `"level"' `"level"' `"level"' `"level"'"
+ e(margins_PT_rtitles) : "`"akm_pe"' `"pe_sq"' `""' `"year"' `"2009"' `"2010"' `"2011"' `"2012"' `"2013"'"
+e(margins_PT_cformats) : "`"%9.0g"' `"%9.0g"' `"%8.2f"' `"%5.3f"' `"%9.0g"' `"%9.0g"'"
+ e(margins_PT_cspans2) : "`"1"' `"1"' `"1"' `"1"' `"2"' `"0"'"
+e(margins_PT_ctitles2) : "`"dy/dx"' `"Std. Err."' `"z"' `"P>|z|"' `"[95% Conf. Interval]"' `""'"
+ e(margins_PT_cspans1) : "`"1"' `"1"' `"1"' `"1"' `"1"' `"1"'"
+e(margins_PT_ctitles1) : "`""' `"Delta-method"' `""' `""' `""' `""'"
+     e(margins_citype) : "normal"
+     e(margins_label3) : "(base)"
+   e(margins_mcmethod) : "noadjust"
+        e(margins_cmd) : "margins"
+    e(margins_cmdline) : "margins , dydx(*) atmeans"
+e(margins_est_cmdline) : "logit fire akm_pe pe_sq i.year if occ_mngr==1 & formal==0, cluster(cnpj)"
+    e(margins_est_cmd) : "logit"
+    e(margins_predict) : "_no_predict"
+ e(margins_emptycells) : "strict"
+     e(margins_atopt1) : "(mean) _factor (mean) _continuous"
+    e(margins_atspec1) : "mean mean mean mean mean mean mean mean"
+   e(margins_atstats1) : "mean mean mean mean mean mean mean mean"
+e(margins_derivatives) : "dy/dx"
+      e(margins_xvars) : "akm_pe pe_sq 2008b.year 2009.year 2010.year 2011.year 2012.year 2013.year"
+ e(margins_expression) : "predict()"
+e(margins_predict1_label) : "Pr(fire)"
+e(margins_predict_label) : "Pr(fire)"
+    e(margins_vcetype) : "Delta-method"
+        e(margins_vce) : "delta"
+e(margins_model_vcetype) : "Robust"
+  e(margins_model_vce) : "cluster"
+      e(margins_title) : "Conditional marginal effects"
+
+added matrices:
+         e(margins_PT) :  9 x 6
+      e(margins_table) :  9 x 8
+          e(margins_b) :  1 x 8
+  e(margins_chainrule) :  1 x 3
+     e(margins_atdims) :  1 x 1
+         e(margins_at) :  1 x 8
+         e(margins_se) :  1 x 8
+   e(margins_Jacobian) :  8 x 9
+      e(margins_error) :  1 x 8
+         e(margins__N) :  1 x 8
+(note: file ../output/tables/appendix/CSS_firing_logit_mngr_unstruc_base.ster not found)
+file ../output/tables/appendix/CSS_firing_logit_mngr_unstruc_base.ster saved
+
+Iteration 0:   log pseudolikelihood =  -192919.6  
+Iteration 1:   log pseudolikelihood = -189804.13  
+Iteration 2:   log pseudolikelihood =  -189725.4  
+Iteration 3:   log pseudolikelihood = -189725.17  
+Iteration 4:   log pseudolikelihood = -189725.17  
+
+Logistic regression                             Number of obs     =    500,770
+                                                Wald chi2(7)      =     375.91
+                                                Prob > chi2       =     0.0000
+Log pseudolikelihood = -189725.17               Pseudo R2         =     0.0166
+
+                                 (Std. Err. adjusted for 244 clusters in cnpj)
+------------------------------------------------------------------------------
+             |               Robust
+        fire |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      akm_pe |  -.3743651   .0244094   -15.34   0.000    -.4222066   -.3265236
+       pe_sq |   .0610971   .0089495     6.83   0.000     .0435564    .0786378
+             |
+        year |
+       2009  |  -.0832835   .0651052    -1.28   0.201    -.2108875    .0443204
+       2010  |  -.4462752   .0764611    -5.84   0.000    -.5961362   -.2964143
+       2011  |  -.3982828   .0642912    -6.19   0.000    -.5242912   -.2722744
+       2012  |  -.2843733   .0705291    -4.03   0.000    -.4226078   -.1461388
+       2013  |  -.3122038   .0759878    -4.11   0.000    -.4611372   -.1632705
+             |
+       _cons |  -1.732617   .0648442   -26.72   0.000    -1.859709   -1.605525
+------------------------------------------------------------------------------
+(est1 stored)
+
+Conditional marginal effects                    Number of obs     =    500,770
+Model VCE    : Robust
+
+Expression   : Pr(fire), predict()
+dy/dx w.r.t. : akm_pe pe_sq 2009.year 2010.year 2011.year 2012.year 2013.year
+at           : akm_pe          =     .068967 (mean)
+               pe_sq           =     .957864 (mean)
+               2008.year       =    .1816642 (mean)
+               2009.year       =    .1687821 (mean)
+               2010.year       =    .1652855 (mean)
+               2011.year       =    .1637658 (mean)
+               2012.year       =    .1639076 (mean)
+               2013.year       =    .1565948 (mean)
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      akm_pe |   -.040868   .0027797   -14.70   0.000     -.046316     -.03542
+       pe_sq |   .0066697   .0009839     6.78   0.000     .0047413    .0085981
+             |
+        year |
+       2009  |  -.0105678   .0083574    -1.26   0.206     -.026948    .0058125
+       2010  |  -.0497887   .0090046    -5.53   0.000    -.0674374   -.0321399
+       2011  |  -.0452043   .0080498    -5.62   0.000    -.0609816    -.029427
+       2012  |   -.033614   .0086784    -3.87   0.000    -.0506232   -.0166047
+       2013  |    -.03654   .0093407    -3.91   0.000    -.0548475   -.0182326
+------------------------------------------------------------------------------
+Note: dy/dx for factor levels is the discrete change from the base level.
+
+added scalars:
+      e(margins_level) =  95
+e(margins_PT_has_legend) =  0
+e(margins_PT_has_cnotes) =  0
+e(margins_PT_k_ctitles) =  2
+       e(margins_k_at) =  1
+       e(margins_k_by) =  1
+  e(margins_k_predict) =  1
+  e(margins_k_margins) =  0
+          e(margins_N) =  500770
+
+added macros:
+  e(margins_marg_dims) : "_deriv"
+ e(margins_put_tables) : "PT"
+   e(margins_PT_rseps) : "`""' `""' `""' `""' `""' `""' `""' `""' `""'"
+  e(margins_PT_rnotes) : "`""' `""' `""' `""' `""' `""' `""' `""' `""'"
+ e(margins_PT_raligns) : "`"right"' `"right"' `"right"' `"right"' `"level"' `"level"' `"level"' `"level"' `"level"'"
+ e(margins_PT_rtitles) : "`"akm_pe"' `"pe_sq"' `""' `"year"' `"2009"' `"2010"' `"2011"' `"2012"' `"2013"'"
+e(margins_PT_cformats) : "`"%9.0g"' `"%9.0g"' `"%8.2f"' `"%5.3f"' `"%9.0g"' `"%9.0g"'"
+ e(margins_PT_cspans2) : "`"1"' `"1"' `"1"' `"1"' `"2"' `"0"'"
+e(margins_PT_ctitles2) : "`"dy/dx"' `"Std. Err."' `"z"' `"P>|z|"' `"[95% Conf. Interval]"' `""'"
+ e(margins_PT_cspans1) : "`"1"' `"1"' `"1"' `"1"' `"1"' `"1"'"
+e(margins_PT_ctitles1) : "`""' `"Delta-method"' `""' `""' `""' `""'"
+     e(margins_citype) : "normal"
+     e(margins_label3) : "(base)"
+   e(margins_mcmethod) : "noadjust"
+        e(margins_cmd) : "margins"
+    e(margins_cmdline) : "margins , dydx(*) atmeans"
+e(margins_est_cmdline) : "logit fire akm_pe pe_sq i.year if occ_labr==1 & formal==1, cluster(cnpj)"
+    e(margins_est_cmd) : "logit"
+    e(margins_predict) : "_no_predict"
+ e(margins_emptycells) : "strict"
+     e(margins_atopt1) : "(mean) _factor (mean) _continuous"
+    e(margins_atspec1) : "mean mean mean mean mean mean mean mean"
+   e(margins_atstats1) : "mean mean mean mean mean mean mean mean"
+e(margins_derivatives) : "dy/dx"
+      e(margins_xvars) : "akm_pe pe_sq 2008b.year 2009.year 2010.year 2011.year 2012.year 2013.year"
+ e(margins_expression) : "predict()"
+e(margins_predict1_label) : "Pr(fire)"
+e(margins_predict_label) : "Pr(fire)"
+    e(margins_vcetype) : "Delta-method"
+        e(margins_vce) : "delta"
+e(margins_model_vcetype) : "Robust"
+  e(margins_model_vce) : "cluster"
+      e(margins_title) : "Conditional marginal effects"
+
+added matrices:
+         e(margins_PT) :  9 x 6
+      e(margins_table) :  9 x 8
+          e(margins_b) :  1 x 8
+  e(margins_chainrule) :  1 x 3
+     e(margins_atdims) :  1 x 1
+         e(margins_at) :  1 x 8
+         e(margins_se) :  1 x 8
+   e(margins_Jacobian) :  8 x 9
+      e(margins_error) :  1 x 8
+         e(margins__N) :  1 x 8
+(note: file ../output/tables/appendix/CSS_firing_logit_labr_struc_base.ster not found)
+file ../output/tables/appendix/CSS_firing_logit_labr_struc_base.ster saved
+
+Iteration 0:   log pseudolikelihood = -304449.34  
+Iteration 1:   log pseudolikelihood = -302841.84  
+Iteration 2:   log pseudolikelihood = -302821.28  
+Iteration 3:   log pseudolikelihood = -302821.23  
+Iteration 4:   log pseudolikelihood = -302821.23  
+
+Logistic regression                             Number of obs     =    710,460
+                                                Wald chi2(7)      =     155.76
+                                                Prob > chi2       =     0.0000
+Log pseudolikelihood = -302821.23               Pseudo R2         =     0.0053
+
+                                 (Std. Err. adjusted for 478 clusters in cnpj)
+------------------------------------------------------------------------------
+             |               Robust
+        fire |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      akm_pe |  -.2388128   .0287584    -8.30   0.000    -.2951783   -.1824473
+       pe_sq |   .0147634   .0135991     1.09   0.278    -.0118903    .0414171
+             |
+        year |
+       2009  |  -.0842564   .0927732    -0.91   0.364    -.2660886    .0975757
+       2010  |  -.1807441   .0910964    -1.98   0.047    -.3592897   -.0021986
+       2011  |  -.1680071    .094425    -1.78   0.075    -.3530768    .0170626
+       2012  |  -.1594111   .0772192    -2.06   0.039    -.3107579   -.0080642
+       2013  |  -.1335013   .0729443    -1.83   0.067    -.2764695    .0094668
+             |
+       _cons |  -1.656192   .0566311   -29.25   0.000    -1.767187   -1.545197
+------------------------------------------------------------------------------
+(est1 stored)
+
+Conditional marginal effects                    Number of obs     =    710,460
+Model VCE    : Robust
+
+Expression   : Pr(fire), predict()
+dy/dx w.r.t. : akm_pe pe_sq 2009.year 2010.year 2011.year 2012.year 2013.year
+at           : akm_pe          =   -.1723447 (mean)
+               pe_sq           =     .686068 (mean)
+               2008.year       =    .1955592 (mean)
+               2009.year       =    .1769375 (mean)
+               2010.year       =    .1716888 (mean)
+               2011.year       =    .1636841 (mean)
+               2012.year       =     .151637 (mean)
+               2013.year       =    .1404935 (mean)
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      akm_pe |  -.0307333   .0040737    -7.54   0.000    -.0387177    -.022749
+       pe_sq |   .0018999   .0017461     1.09   0.277    -.0015223    .0053222
+             |
+        year |
+       2009  |   -.011411   .0124216    -0.92   0.358    -.0357569    .0129348
+       2010  |  -.0236902   .0116262    -2.04   0.042    -.0464772   -.0009033
+       2011  |  -.0221166   .0121604    -1.82   0.069    -.0459506    .0017173
+       2012  |  -.0210466   .0102072    -2.06   0.039    -.0410524   -.0010408
+       2013  |  -.0177817   .0096922    -1.83   0.067     -.036778    .0012146
+------------------------------------------------------------------------------
+Note: dy/dx for factor levels is the discrete change from the base level.
+
+added scalars:
+      e(margins_level) =  95
+e(margins_PT_has_legend) =  0
+e(margins_PT_has_cnotes) =  0
+e(margins_PT_k_ctitles) =  2
+       e(margins_k_at) =  1
+       e(margins_k_by) =  1
+  e(margins_k_predict) =  1
+  e(margins_k_margins) =  0
+          e(margins_N) =  710460
+
+added macros:
+  e(margins_marg_dims) : "_deriv"
+ e(margins_put_tables) : "PT"
+   e(margins_PT_rseps) : "`""' `""' `""' `""' `""' `""' `""' `""' `""'"
+  e(margins_PT_rnotes) : "`""' `""' `""' `""' `""' `""' `""' `""' `""'"
+ e(margins_PT_raligns) : "`"right"' `"right"' `"right"' `"right"' `"level"' `"level"' `"level"' `"level"' `"level"'"
+ e(margins_PT_rtitles) : "`"akm_pe"' `"pe_sq"' `""' `"year"' `"2009"' `"2010"' `"2011"' `"2012"' `"2013"'"
+e(margins_PT_cformats) : "`"%9.0g"' `"%9.0g"' `"%8.2f"' `"%5.3f"' `"%9.0g"' `"%9.0g"'"
+ e(margins_PT_cspans2) : "`"1"' `"1"' `"1"' `"1"' `"2"' `"0"'"
+e(margins_PT_ctitles2) : "`"dy/dx"' `"Std. Err."' `"z"' `"P>|z|"' `"[95% Conf. Interval]"' `""'"
+ e(margins_PT_cspans1) : "`"1"' `"1"' `"1"' `"1"' `"1"' `"1"'"
+e(margins_PT_ctitles1) : "`""' `"Delta-method"' `""' `""' `""' `""'"
+     e(margins_citype) : "normal"
+     e(margins_label3) : "(base)"
+   e(margins_mcmethod) : "noadjust"
+        e(margins_cmd) : "margins"
+    e(margins_cmdline) : "margins , dydx(*) atmeans"
+e(margins_est_cmdline) : "logit fire akm_pe pe_sq i.year if occ_labr==1 & formal==0, cluster(cnpj)"
+    e(margins_est_cmd) : "logit"
+    e(margins_predict) : "_no_predict"
+ e(margins_emptycells) : "strict"
+     e(margins_atopt1) : "(mean) _factor (mean) _continuous"
+    e(margins_atspec1) : "mean mean mean mean mean mean mean mean"
+   e(margins_atstats1) : "mean mean mean mean mean mean mean mean"
+e(margins_derivatives) : "dy/dx"
+      e(margins_xvars) : "akm_pe pe_sq 2008b.year 2009.year 2010.year 2011.year 2012.year 2013.year"
+ e(margins_expression) : "predict()"
+e(margins_predict1_label) : "Pr(fire)"
+e(margins_predict_label) : "Pr(fire)"
+    e(margins_vcetype) : "Delta-method"
+        e(margins_vce) : "delta"
+e(margins_model_vcetype) : "Robust"
+  e(margins_model_vce) : "cluster"
+      e(margins_title) : "Conditional marginal effects"
+
+added matrices:
+         e(margins_PT) :  9 x 6
+      e(margins_table) :  9 x 8
+          e(margins_b) :  1 x 8
+  e(margins_chainrule) :  1 x 3
+     e(margins_atdims) :  1 x 1
+         e(margins_at) :  1 x 8
+         e(margins_se) :  1 x 8
+   e(margins_Jacobian) :  8 x 9
+      e(margins_error) :  1 x 8
+         e(margins__N) :  1 x 8
+(note: file ../output/tables/appendix/CSS_firing_logit_labr_unstruc_base.ster not found)
+file ../output/tables/appendix/CSS_firing_logit_labr_unstruc_base.ster saved
+
+. 
+.         /*Tables of regression model estimates*/
+.  foreach type in mngr labr{
+  2.         estimates use ${tabpath}/appendix/CSS_firing_reg_`type'_struc_base.ster
+  3.         eststo ns1: 
+  4.         estimates use ${tabpath}/appendix/CSS_firing_reg_`type'_unstruc_base.ster
+  5.         eststo nu1:
+  6.         estimates use ${tabpath}/appendix/CSS_firing_reg_`type'_both_base.ster
+  7.         eststo nb1:
+  8.     estimates use ${tabpath}/appendix/CSS_firing_reg_`type'_struc_ctrl.ster
+  9.         eststo ns2: 
+ 10.         estimates use ${tabpath}/appendix/CSS_firing_reg_`type'_unstruc_ctrl.ster
+ 11.         eststo nu2:
+ 12.         estimates use ${tabpath}/appendix/CSS_firing_reg_`type'_both_ctrl.ster
+ 13.         eststo nb2:
+ 14. 
+. 
+.         esttab nu1 ns1 nb1 nu2 ns2 nb2 using "${tabpath}/appendix/app_firing_regs_`type'.tex", booktabs replace ///
+>                 keep(1.formal akm_pe c.akm_pe#c.akm_pe 1.formal#c.akm_pe* _cons)  ///
+>                 order(1.formal akm_pe c.akm_pe#c.akm_pe 1.formal#c.akm_pe* _cons) ///
+>                 compress collabels(none) nodepvars nogap  ///
+>                 mtitles("Structured = 0" "Structured = 1" "Combined" "Structured = 0" "Structured = 1" "Combined") ///
+>                 coef(akm_pe "Quality" c.akm_pe#c.akm_pe "Qual.\ Sq." 1.formal "Struc.\ Mgmt." ///
+>                 1.formal#c.akm_pe "Struc.\ X Qual." 1.formal#c.akm_pe#c.akm_pe "Struc.\ X Qual.\ Sq." _cons "Constant"
+> ) ///
+>                 cells(b(star fmt(3)) se(par fmt(3))) ///
+>                 scalars("N_clust Firms") ///
+>                 indicate("Year controls = 2010.year" "Firm \& Worker controls = lemp", labels("\cmark" ""))
+ 15. 
+.         esttab nu1 ns1 nb1 nu2 ns2 nb2 , ///
+>                 keep(1.formal akm_pe c.akm_pe#c.akm_pe 1.formal#c.akm_pe* _cons)  ///
+>                 order(1.formal akm_pe c.akm_pe#c.akm_pe 1.formal#c.akm_pe* _cons) ///
+>                 compress collabels(none) nodepvars nogap  ///
+>                 mtitles("Structured = 0" "Structured = 1" "Combined" "Structured = 0" "Structured = 1" "Combined") ///
+>                 coef(akm_pe "Quality" c.akm_pe#c.akm_pe "Qual.\ Sq." 1.formal "Struc.\ Mgmt." ///
+>                 1.formal#c.akm_pe "Struc.\ X Qual." 1.formal#c.akm_pe#c.akm_pe "Struc.\ X Qual.\ Sq." _cons "Constant"
+> ) ///
+>                 cells(b(star fmt(3)) se(par fmt(3))) ///
+>                 scalars("N_clust Firms") ///
+>                 indicate("Year controls = 2010.year" "Firm \& Worker controls = lemp", labels("\cmark" ""))
+ 16. }
+(note: file ../output/tables/appendix/app_firing_regs_mngr.tex not found)
+(output written to ../output/tables/appendix/app_firing_regs_mngr.tex)
+
+----------------------------------------------------------------------------------------
+                 (1)          (2)          (3)          (4)          (5)          (6)   
+           Structu~0    Structu~1     Combined    Structu~0    Structu~1     Combined   
+----------------------------------------------------------------------------------------
+Str..\ M~.                              -0.050**                                0.469** 
+                                       (0.019)                                (0.148)   
+Quality       -0.017**     -0.018*      -0.017**     -0.013*      -0.005       -0.013*  
+             (0.006)      (0.007)      (0.006)      (0.005)      (0.005)      (0.005)   
+Qual.\ Sq.     0.002        0.003**      0.002        0.003**      0.002        0.003*  
+             (0.001)      (0.001)      (0.001)      (0.001)      (0.001)      (0.001)   
+Str..\ X~.                              -0.002                                  0.008   
+                                       (0.009)                                (0.008)   
+Str..\ X~.                               0.001                                 -0.001   
+                                       (0.002)                                (0.002)   
+Constant       0.164***     0.114***     0.164***     0.288***     0.705***     0.296***
+             (0.011)      (0.015)      (0.011)      (0.073)      (0.142)      (0.073)   
+Year con~s    \cmark       \cmark       \cmark       \cmark       \cmark       \cmark   
+Firm \& ~s                                           \cmark       \cmark       \cmark   
+----------------------------------------------------------------------------------------
+N              15883        22354        38237        15883        22354        38237   
+Firms            438          239          677          438          239          677   
+----------------------------------------------------------------------------------------
+(note: file ../output/tables/appendix/app_firing_regs_labr.tex not found)
+(output written to ../output/tables/appendix/app_firing_regs_labr.tex)
+
+----------------------------------------------------------------------------------------
+                 (1)          (2)          (3)          (4)          (5)          (6)   
+           Structu~0    Structu~1     Combined    Structu~0    Structu~1     Combined   
+----------------------------------------------------------------------------------------
+Str..\ M~.                              -0.009                                  0.085   
+                                       (0.012)                                (0.065)   
+Quality       -0.030***    -0.044***    -0.030***    -0.020***    -0.027***    -0.020***
+             (0.004)      (0.003)      (0.004)      (0.002)      (0.002)      (0.002)   
+Qual.\ Sq.     0.004*       0.009***     0.004*       0.004***     0.008***     0.004***
+             (0.002)      (0.001)      (0.002)      (0.001)      (0.001)      (0.001)   
+Str..\ X~.                              -0.013*                                -0.008*  
+                                       (0.005)                                (0.003)   
+Str..\ X~.                               0.006**                                0.004** 
+                                       (0.002)                                (0.001)   
+Constant       0.161***     0.152***     0.161***     0.140*       0.257***     0.147*  
+             (0.008)      (0.009)      (0.008)      (0.062)      (0.033)      (0.069)   
+Year con~s    \cmark       \cmark       \cmark       \cmark       \cmark       \cmark   
+Firm \& ~s                                           \cmark       \cmark       \cmark   
+----------------------------------------------------------------------------------------
+N             710460       500770      1211230       710460       500770      1211230   
+Firms            478          244          722          478          244          722   
+----------------------------------------------------------------------------------------
+
+. 
+. 
+. /*Tables of logit model estimates*/
+.         estimates use ${tabpath}/appendix/CSS_firing_logit_labr_struc_base.ster
+
+.         eststo ls1: 
+
+.         estimates use ${tabpath}/appendix/CSS_firing_logit_labr_unstruc_base.ster
+
+.         eststo lu1:
+
+. 
+.     estimates use ${tabpath}/appendix/CSS_firing_logit_mngr_struc_base.ster
+
+.         eststo ms1: 
+
+.         estimates use ${tabpath}/appendix/CSS_firing_logit_mngr_unstruc_base.ster
+
+.         eststo mu1:
+
+. 
+. 
+. 
+. 
+.         esttab mu1 ms1 lu1 ls1 using "${tabpath}/appendix/app_firing_logit_all_base.tex", booktabs replace ///
+>                 keep(akm_pe pe_sq )  ///
+>                 order(akm_pe pe_sq ) ///
+>                 compress collabels(none) nodepvars nogap  ///
+>         mgroups("Managers" "Non-managers", ///
+>             pattern(1 0 1 0  ) prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@span})) ///
+>                 mtitles("Structured = 0" "Structured = 1" "Structured = 0" "Structured = 1"  ) ///
+>                 coef(akm_pe "Quality" pe_2 "Qual.\ Sq."  ) ///
+>                 cells(margins_b(star fmt(3))  margins_se(par fmt(3))) ///
+>                 scalars("N_clust Firms") ///
+>                 indicate("Year controls = 2010.year" , labels("\cmark" ""))
+(note: file ../output/tables/appendix/app_firing_logit_all_base.tex not found)
+(output written to ../output/tables/appendix/app_firing_logit_all_base.tex)
+
+. 
+.         esttab mu1 ms1 lu1 ls1  ,   ///
+>                 keep(akm_pe pe_sq )  ///
+>                 order(akm_pe pe_sq ) ///
+>                 compress collabels(none) nodepvars nogap  ///
+>         mgroups("Managers" "Non-managers", ///
+>             pattern(1 0 1 0  ) prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@span})) ///
+>                 mtitles("Structured = 0" "Structured = 1" "Structured = 0" "Structured = 1"  ) ///
+>                 coef(akm_pe "Quality" pe_2 "Qual.\ Sq."  ) ///
+>                 cells(margins_b(star fmt(3))  margins_se(par fmt(3))) ///
+>                 scalars("N_clust Firms") ///
+>                 indicate("Year controls = 2010.year" , labels("\cmark" ""))
+
+--------------------------------------------------------------
+           \multicolumn{2}{c}{Managers} \multicolumn{2}{c}{Non-managers}\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+                 (1)          (2)          (3)          (4)   
+           Structu~0    Structu~1    Structu~0    Structu~1   
+--------------------------------------------------------------
+fire                                                          
+Quality       -0.016**     -0.017**     -0.031***    -0.041***
+             (0.005)      (0.006)      (0.004)      (0.003)   
+pe_sq          0.002        0.003**      0.002        0.007***
+             (0.001)      (0.001)      (0.002)      (0.001)   
+Year con~s    \cmark       \cmark       \cmark       \cmark   
+--------------------------------------------------------------
+N              15883        22354       710460       500770   
+Firms            438          239          478          244   
+--------------------------------------------------------------
+
+. 
+. 
+. cap log close

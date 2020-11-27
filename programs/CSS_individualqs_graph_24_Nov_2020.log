@@ -1,0 +1,209 @@
+------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\CSS_individu
+> alqs_graph_24_Nov_2020.log
+  log type:  text
+ opened on:  24 Nov 2020, 19:18:29
+
+. 
+. /* install any packages locally */
+. sysdir set PERSONAL "$adobase/ado/personal"
+
+. sysdir set PLUS     "$adobase/ado/plus"
+
+. sysdir set SITE     "$adobase/ado/site"
+
+. 
+. /* See https://www.stata.com/manuals13/pcreturn.pdf#pcreturn */
+. local variant = cond(c(MP),"MP",cond(c(SE),"SE",c(flavor)) )  
+
+. 
+. di "=== SYSTEM DIAGNOSTICS ==="
+=== SYSTEM DIAGNOSTICS ===
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 15.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 03 Feb 2020
+
+. di "Variant:       `variant'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    4
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. di "=========================="
+==========================
+
+. 
+end of do-file
+
+. 
+. pause on
+
+. set more off
+
+. set linesize 120                                                                                                      
+>  
+
+. 
+. /* %*************************************************************************** */
+. use "${inpath}/wmslong_forAnalysis.dta", clear
+
+. 
+. keep if cnpj!=""
+(99 observations deleted)
+
+. 
+. su management, d
+
+               MGMT: Overall management score
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     1.333333       1.055556
+ 5%     1.611111       1.055556
+10%     1.833333       1.111111       Obs               1,046
+25%     2.222222       1.166667       Sum of Wgt.       1,046
+
+50%     2.666667                      Mean           2.692154
+                        Largest       Std. Dev.      .6428742
+75%     3.111111       4.555555
+90%          3.5       4.666667       Variance       .4132873
+95%     3.722222       4.666667       Skewness       .1183315
+99%     4.277778       4.722222       Kurtosis       2.852894
+
+. 
+. gen sd=`r(sd)'
+
+. gen mmean=`r(mean)'
+
+. gen sd0 = mmean - (sd/2)
+
+. gen sd1 = mmean + (sd/2)
+
+. 
+. cap drop m0
+
+. gen m0 = 1 if management>= (sd0-0.05) & management<= (sd0+0.05)
+(980 missing values generated)
+
+. 
+. 
+. cap drop m1
+
+. gen m1 = 1 if management>= (sd1-0.05) & management<= (sd1+0.05)
+(976 missing values generated)
+
+. 
+. 
+. gen sdmarker = "l" if m0==1
+(980 missing values generated)
+
+. replace sdmarker = "h" if m1==1
+(70 real changes made)
+
+. 
+. drop if sdmarker==""
+(910 observations deleted)
+
+. 
+. cap drop N
+
+. gen N=_N
+
+. 
+. collapse N lean1 lean2 perf1 perf2 perf3 perf4 perf5 perf6 perf7 perf8 perf9 perf10 talent1 talent2 talent3 talent4 ta
+> lent5 talent6 management, by(sdmarker)
+
+. 
+. local lstyle "color(black%0) lcolor(black)"
+
+. 
+. forvalues x=1(1)18{
+  2.   cap drop bl`x'
+  3.   gen bl`x'=`x'
+  4. }
+
+. 
+. local opbar     fcolor(lavender*.6%80)  barwidth(.8) lcolor(lavender)  
+
+. local pbar      fcolor(maroon%80)       barwidth(.8) lcolor(maroon%100) 
+
+. local opline    fcolor(none)            barwidth(.8) lcolor(lavender)   lwidth(thick) 
+
+. local pline     fcolor(none)            barwidth(.8) lcolor(maroon)     lwidth(medthick) 
+
+. twoway          (bar lean1   bl1 if sdmarker=="l", `opbar') ///
+>                 (bar lean2   bl2 if sdmarker=="l", `opbar') ///
+>                 (bar perf1   bl3 if sdmarker=="l", `opbar') ///
+>                 (bar perf2   bl4 if sdmarker=="l", `opbar') ///
+>                 (bar perf3   bl5 if sdmarker=="l", `opbar') ///
+>                 (bar perf4   bl6 if sdmarker=="l", `opbar') ///
+>                 (bar perf5   bl7 if sdmarker=="l", `opbar') ///
+>                 (bar perf6   bl8 if sdmarker=="l", `opbar') ///
+>                 (bar perf7   bl9 if sdmarker=="l", `opbar') ///
+>                 (bar perf8   bl10 if sdmarker=="l", `opbar') ///
+>                 (bar perf9   bl11 if sdmarker=="l", `opbar') ///
+>                 (bar perf10  bl12 if sdmarker=="l", `opbar') ///
+>                 (bar talent1 bl13 if sdmarker=="l", `pbar') ///
+>                 (bar talent2 bl14 if sdmarker=="l", `pbar') ///
+>                 (bar talent3 bl15 if sdmarker=="l", `pbar') ///
+>                 (bar talent4 bl16 if sdmarker=="l", `pbar') ///
+>                 (bar talent5 bl17 if sdmarker=="l", `pbar') ///
+>                 (bar talent6 bl18 if sdmarker=="l", `pbar') ///
+>                 (bar lean1   bl1  if sdmarker=="h", `opline') ///
+>                 (bar lean2   bl2  if sdmarker=="h", `opline') ///
+>                 (bar perf1   bl3  if sdmarker=="h", `opline') ///
+>                 (bar perf2   bl4  if sdmarker=="h", `opline') ///
+>                 (bar perf3   bl5  if sdmarker=="h", `opline') ///
+>                 (bar perf4   bl6  if sdmarker=="h", `opline') ///
+>                 (bar perf5   bl7  if sdmarker=="h", `opline') ///
+>                 (bar perf6   bl8  if sdmarker=="h", `opline') ///
+>                 (bar perf7   bl9  if sdmarker=="h", `opline') ///
+>                 (bar perf8   bl10 if sdmarker=="h", `opline') ///
+>                 (bar perf9   bl11 if sdmarker=="h", `opline') ///
+>                 (bar perf10  bl12 if sdmarker=="h", `opline') ///
+>                 (bar talent1 bl13 if sdmarker=="h", `pline') ///
+>                 (bar talent2 bl14 if sdmarker=="h", `pline') ///
+>                 (bar talent3 bl15 if sdmarker=="h", `pline') ///
+>                 (bar talent4 bl16 if sdmarker=="h", `pline') ///
+>                 (bar talent5 bl17 if sdmarker=="h", `pline') ///
+>                 (bar talent6 bl18 if sdmarker=="h", `pline') ///
+>                 , ///
+>                 yline(2.683506) xlab(1 "O1" 2 "O2" 3 "O3" 4 "O4" 5 "O5" 6 "O6" 7 "O7" 8 "O8" 9 "O9" 10 "O10" 11 "O11" 
+> 12 "O12" 13 "P1" 14 "P2" 15 "P3" 16 "P4" 17 "P5" 18 "P6", noticks angle(vertical)) ///
+>                 yscale(range(1 5)) ///
+>                 ylabel(1 1.5 2 2.5 3 3.5 4 4.5 5, noticks grid glcolor(gs3) glpattern(dot) gmax labsize(medsmall))  //
+> /
+>                 legend(nobox region(fcolor(white) lcolor(white) lwidth(thin) lpattern(solid)) ///
+>                 order(1 "Operations Q: {&mu} - 1/2{&sigma}" 13 "People Q: {&mu} - 1/2{&sigma}" 21 "Operations Q: {&mu}
+>  + 1/2{&sigma}"   36 "People Q: {&mu} + 1/2{&sigma}") col(2) pos(6) ring(1) symxsize(10) size(medlarge)) ///
+>                 xtitle("Management questions", size(medlarge)) ytitle("Average management score", size(medlarge)) ///
+>                 graphregion(fcolor(white) lcolor(white) ifcolor(white) ilcolor(white)) plotregion(fcolor(white) lcolor
+> (white) ifcolor(white) ilcolor(white)) 
+
+. 
+. 
+. graph save ${figpath}/fig_WMS_Qs.gph , replace
+(note: file ../output/figures/fig_WMS_Qs.gph not found)
+(file ../output/figures/fig_WMS_Qs.gph saved)
+
+. graph export ${figpath}/fig_WMS_Qs.pdf , as(pdf) replace
+(file ../output/figures/fig_WMS_Qs.pdf written in PDF format)
+
+. 
+. 
+. log close
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\CSS_individu
+> alqs_graph_24_Nov_2020.log
+  log type:  text
+ closed on:  24 Nov 2020, 19:18:30
+------------------------------------------------------------------------------------------------------------------------

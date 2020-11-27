@@ -1,0 +1,241 @@
+------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\../data/inpu
+> t/describe_WMS_RAIS_flow_microdata_25_Nov_2020.log
+  log type:  text
+ opened on:  25 Nov 2020, 08:28:55
+  1713141:214(68565):3807512685:102665673       (data signature set)
+  (file ../data/input/datasig_WMS_RAIS_flow_microdata_25_Nov_2020.txt saved)
+
+Contains data from ../data/input/WMS_RAIS_flow_microdata.dta
+  obs:     1,713,141                          
+ vars:           214                          17 Mar 2020 11:05
+ size: 3,323,493,540                          (_dta has notes)
+------------------------------------------------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+------------------------------------------------------------------------------------------------------------------------
+account_id      str22   %22s                * ID: BvD account ID (original)
+account_id_new  str17   %17s                  ID: BvD account ID (latest)
+company_name    str123  %123s                 ID: Company name
+cnpj            str74   %74s                  ID: CNPJ
+sic             int     %9.0g                 ID: 3-digit SIC
+cty             str2    %9s                 * ID: 2-digit country code
+country         str19   %19s                  ID: Country name
+region          str46   %46s                  Brazilian region (WMS)
+postcode_p1     str50   %50s                  ID: Postcode (plant)
+postcode_hq     str13   %13s                  ID: Postcode (HQ)
+wave            float   %9.0g               * ID: Year of WMS wave
+continent       str13   %13s                  ID: Continent
+tickersymbol    str8    %9s                   ID: Ticker symbol
+macroreg        str2    %9s                   ID: Macro-region
+lean1           float   %10.0g              * MGMT: Intro to lean
+lean2           float   %10.0g              * MGMT: Rationale for lean
+perf1           float   %10.0g              * MGMT: Process Documentation
+perf2           float   %10.0g              * MGMT: Performance Tracking
+perf3           float   %10.0g              * MGMT: Performance Review
+perf4           float   %10.0g              * MGMT: Performance Dialogue
+perf5           float   %10.0g              * MGMT: Consequence Management
+perf6           float   %10.0g              * MGMT: Type of Targets
+perf7           float   %10.0g              * MGMT: Interconnection of Goals
+perf8           float   %10.0g              * MGMT: Time Horizon
+perf9           float   %10.0g              * MGMT: Goals are Stretching
+perf10          float   %10.0g              * MGMT: Clarity of Goals and Measurement
+talent1         float   %10.0g              * MGMT: Instilling a Talent Mindset
+talent2         float   %10.0g              * MGMT: Building a High-Performance Culture
+talent3         float   %10.0g              * MGMT: Making Room for Talent
+talent4         float   %10.0g              * MGMT: Developing Talent
+talent5         float   %10.0g              * MGMT: Creating a Distinctive EVP
+talent6         float   %10.0g              * MGMT: Retaining Talent
+selfscore       byte    %10.0g              * MGMT: Manager self-score
+selfops         byte    %8.0g               * MGMT: Manager self-score (operations)
+selfpeople      byte    %8.0g               * MGMT: Manager self-score (people)
+emp_firm        long    %10.0g              * FIRM: # employees (firm)
+emp_plant       int     %10.0g              * FIRM: # employees (plant)
+onsite          byte    %10.0g              * FIRM: Is HQ on site?
+xsite1          int     %10.0g              * FIRM: # production sites (total)
+xsite2          int     %10.0g              * FIRM: # production sites (abroad)
+mne_yn          byte    %10.0g              * FIRM: =1 if multinational
+mne_cty         str52   %52s                * FIRM: MNE home country
+mne_d           byte    %9.0g                 FIRM: =1 if domestic MNE
+mne_f           byte    %9.0g                 FIRM: =1 if foreign MNE
+firmfounded     int     %10.0g                FIRM: firm foundation date
+firmage         float   %9.0g               * FIRM: firm age
+plantage        double  %10.0g              * FIRM: Plant age
+competition     byte    %10.0g              * FIRM: # competitors (reported/perceived)
+outsourced      byte    %10.0g              * FIRM: % production outsourced
+export_share    double  %10.0g              * FIRM: % production exported
+export          float   %9.0g                 FIRM: =1 if firm exports
+export25        float   %9.0g                 FIRM: =1 if firm exports >25% output
+export50        float   %9.0g                 FIRM: =1 if firm exports >50% output
+ownership       str37   %37s                * OWN: Who knows the firm
+other_ownership str45   %45s                  OWN: Who owns the firm (if other)
+ownership_pre   str37   %37s                  OWN: Who owned the firm previously
+other_ownersh~s str45   %45s                  OWN: Who owned the firm 3yrs ago (if other)
+ownership_year  int     %10.0g                OWN: Year when ownership changed
+generation      byte    %10.0g              * OWN: Generation of family firm
+n_family_manag  byte    %10.0g              * OWN: # family members in management
+ceo             str59   %59s                  OWN: Who is the CEO (relative to family)
+family          float   %9.0g                 OWN: =1 if family firm
+founder         float   %9.0g                 OWN: =1 if founder firm
+ff              float   %9.0g                 OWN: =1 if founder or family firm
+changed_owne~3y byte    %10.0g     yn       * OWN: Has ownership changed in the past 3 yrs?
+delta_own       str30   %30s                  OWN: Changed ownership in the last 3 years (from what)
+span            byte    %10.0g              * ORG: span of control
+central         float   %9.0g                 ORG: Average of centralization measure
+central4        byte    %10.0g              * ORG: Hiring autonomy
+central5        double  %10.0g              * ORG: Max capital investment (US$)
+central6        byte    %10.0g              * ORG: Marketing autonomy
+central7        byte    %10.0g              * ORG: New product intro autonomy
+lcentral5       float   %9.0g                 ORG: Ln of max k investment
+zorg            float   %9.0g                 ORG: z-score of all centralization measures
+zorg2           float   %9.0g                 ORG: z-score of central 4,6,7
+zcentral4       float   %9.0g                 ORG: z-score of hiring autonomy
+zcentral5       float   %9.0g                 ORG: z-score of max k investment
+zcentral6       float   %9.0g                 ORG: z-score of marketing autonomy
+zcentral7       float   %9.0g                 ORG: z-score of new products autonomy
+levels2ceo      byte    %8.0g               * ORG: Layers btw CEO-shopfloor
+levels2pm       int     %8.0g               * ORG: Layers btw PM-shopfloor
+levels_ceopm    int     %9.0g               * ORG: Layers btw CEO-PM
+deltalevels     str3    %9s                 * ORG: Changed layers in past 3 years
+numberlevels    byte    %8.0g               * ORG: # levels changed in past 3 years
+i_position      str50   %50s                * MGR: Verbatim position in the company
+i_pos_clean     str10   %10s                  MGR: Position (clean)
+i_posttenure    double  %10.0g                MGR: Tenure in post
+i_comptenure    double  %10.0g                MGR: Tenure in company
+i_skills        str29   %29s                  MGR: Manager eduation level
+i_degree        long    %10.0g                MGR: =1 if mgr has degree
+i_sex           byte    %8.0g      i_sex      MGR: =1 if mgr is male
+i_grad_course   str113  %113s                 MGR: Undergrad course type
+i_grad_yr       str65   %65s                  MGR: Year graduated (undergrad)
+i_postgrad_co~e str100  %100s                 MGR: Graduate course type
+i_postgrad_yr   str37   %37s                  MGR: Year graduated (graudate)
+i_doctoral_co~e str51   %51s                  MGR: Doctoral course type
+i_doctoral_yr   str22   %22s                  MGR: Year graduated (doctoral)
+union           float   %10.0g              * WORK: % union members
+percent_m       float   %10.0g              * WORK: % mgrs in the firm
+percent_nm      double  %10.0g              * WORK: % non-mgrs in the firm
+degree_m        byte    %10.0g              * WORK: % mgrs with college degree
+degree_nm       float   %10.0g              * WORK: % non-mgrs with college degree
+degree_t        float   %9.0g               * WORK: % all workers with degree
+stem_m          byte    %10.0g                WORK: % mgrs with STEM degree
+stem_nm         byte    %10.0g                WORK: % non-mgrs with STEM degree
+female_m        byte    %10.0g                WORK: % female, mgrs
+female_nm       int     %10.0g                WORK: % female, non-mgrs
+female_t        float   %9.0g                 WORK: % female, total
+mng_left12mnths byte    %10.0g              * WORK: % mgr turnover (past 12 mo)
+bonus1          byte    %10.0g              * WORK: Mgr refused to answer
+bonus2          float   %10.0g              * WORK: bonus as % of total salary
+bonus3          float   %8.0g               * WORK: % bonus based on individual perf
+bonus4          float   %8.0g               * WORK: % bonus based on team perf
+bonus5          float   %10.0g              * WORK: salary bump (%) when promotion is given
+bonus6          float   %8.0g               * WORK: % bonus based on comp perf
+hours_m         float   %10.0g              * WORK: Avg hrs worked, mgrs
+hours_nm        float   %10.0g              * WORK: Avg hrs worked, non-mgrs
+hours_t         float   %9.0g               * WORK: Avg hrs worked, total
+paceofwork      byte    %9.0g               * WORK: Who sets the pace of work
+paceoftask      byte    %9.0g               * WORK: Who sets the tasks
+analyst         str31   %31s                * SVY: Analyst (interviewer) name
+duration        float   %10.0g                SVY: Interview duration
+i_knowledge     byte    %10.0g                SVY: Interviewee knowledge of firm
+i_willing       byte    %10.0g                SVY: Interviewee willingness
+i_impatience    byte    %10.0g                SVY: Interviewee impatience
+reliability     byte    %9.0g               * SVY: Reliability score (knowledge+willing)
+i_attitude_en~t byte    %10.0g                SVY: Attitude towards environment
+rescheduled     int     %10.0g                SVY: # times interviewed rescheduled
+i_seniority     byte    %10.0g                SVY: Mgr seniority (analyst coded)
+i_age           int     %10.0g                SVY: Mgr age (guess)
+date            int     %td..                 SVY: Survey date
+dd              byte    %9.0g                 SVY: Day of interview
+mm              byte    %9.0g                 SVY: Month of interview
+yy              int     %9.0g                 SVY: Year of interview
+dow             byte    %9.0g                 SVY: Day of week of interview
+hour            byte    %9.0g                 SVY: Hour of interview
+minute          byte    %9.0g                 SVY: Minute of interview
+nearesthour     byte    %9.0g                 SVY: Nearest hour of interview
+employees       double  %8.0g               * ORBIS: # employees
+sales           double  %12.0g              * ORBIS: Sales (000 $)
+sic4            int     %10.0g              * ORBIS: SIC 4-digit
+roce            float   %9.0g               * ORBIS: ROCE (estm)
+roce_bvd        double  %9.0g                 ORBIS: ROCE (BvD)
+ebit            double  %12.0g              * ORBIS: EBIT (000 $)
+ppent           double  %12.0g              * ORBIS: Tangible fixed assets (000 $)
+materials       double  %8.0g               * ORBIS: Materials (000 $)
+wages           double  %12.0g              * ORBIS: Wage bill (000 $)
+q               float   %9.0g               * ORBIS: Tobin's Q (estm)
+wfh_yn_m        byte    %10.0g                WLB: Work from home Y/N (mgr)
+wfh_yn_nm       byte    %10.0g                WLB: Work from home Y/N (non-mgr)
+wfh_days_m      byte    %10.0g                WLB: Work from home # days (mgr)
+wfh_days_nm     byte    %10.0g                WLB: Work from home # days (non-mgr)
+lb_doingbizrank int     %10.0g                WB: Ease of Doing Business Rank
+lb_hireindex    byte    %10.0g                WB: Difficulty of hiring index (0-100)
+lb_hoursindex   byte    %10.0g                WB: Rigidity of hours index (0-100)
+lb_redindex     byte    %10.0g                WB: Difficulty of redundancy index (0-100)
+lb_employindex  byte    %10.0g                WB: Rigidity of employment index (0-100)
+lb_redcosts     byte    %10.0g                WB: Redundancy costs (weeks of salary)
+ngdpdpc         float   %9.0g                 IMF: GDP per capita, current prices (U.S.  - Billions)
+pppgdp          float   %9.0g                 IMF: GDP based on PPP valuation of cty GDP (Current international $ -
+                                                Billions)
+ngdpdpc2008     float   %9.0g                 IMF: GDP per capita, current prices (U.S.  - Billions)
+k               float   %9.0g                 
+tag             byte    %12.0g                
+mis_competition float   %9.0g                 
+compet_cat      float   %9.0g                 MGMT: 3 category number of competitors (from BBCVW)
+own_grp         float   %9.0g                 group(ownership)
+own_cat         float   %9.0g                 MGMT: 6 categories of ownership (from BBCVW)
+sic2            str2    %9s                   2-digit SIC code (WMS)
+lemp            float   %9.0g                 Nat. log of firm employment (WMS)
+lfirmage        float   %9.0g                 Nat. log of firm age (WMS)
+management      float   %9.0g                 MGMT: Overall management score
+operations      float   %9.0g                 MGMT: Average of lean1 & lean2
+monitor         float   %9.0g                 MGMT: Average of perf1 to perf5
+target          float   %9.0g                 MGMT: Average of perf6 to perf10
+people          float   %9.0g                 MGMT: Average of talent1 to talent6
+zmanagement     float   %9.0g                 Management score
+zoperations     float   %9.0g                 Management score (operations)
+zmonitor        float   %9.0g                 Management score (monitoring)
+ztarget         float   %9.0g                 Management score (targets)
+zpeople         float   %9.0g                 Management score (people)
+formal          float   %23.0g     struc      Management score >= 3
+pis             str12   %12s                  Worker PIS code
+akm_pe          double  %12.0g                Estimated person effect from AKM
+akm_fe          double  %12.0g                Estimated employer effect from AKM
+cnae20_class    str6    %6s                   Industry class (5 digit) according to CNAE 2.0
+cause_of_sep    str2    %2s                   Reason for contract termination
+tenure_months   double  %12.0g                Tenure in contract (in months)
+num_hours_con~d double  %12.0g                Number of weekly hours contracted
+age_31dec       double  %12.0g                Age on Dec. 31 based on modal date of birth reported for this PIS
+earn_avg_mont~l double  %12.0g                Inflation Adjusted Monthly Earnings - 2015 Reais
+male            double  %12.0g                
+race_white      double  %12.0g                
+race_pardo      double  %12.0g                
+race_preto      double  %12.0g                
+race_other      double  %12.0g                
+educ_best       double  %12.0g                Maximum education observed for this PIS up to this year
+year            double  %12.0g                
+has_akm_pe      double  %12.0g                Worker matched to an estimated AKM person effect
+log_wage        double  %12.0g                
+state           str6    %6s                   
+occ_dir         double  %12.0g                
+occ_mngr        double  %12.0g                
+occ_wms_mngr    double  %12.0g                
+occ_labr        double  %12.0g                
+occ_prod        double  %12.0g                
+occ_tech        double  %12.0g                
+occ_supr        double  %12.0g                
+hire            double  %12.0g                
+sep             double  %12.0g                
+fire            double  %12.0g                
+nohs            double  %12.0g                
+somehs          double  %12.0g                
+hs              double  %12.0g                
+coll            double  %12.0g                
+                                            * indicated variables have notes
+------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\../data/inpu
+> t/describe_WMS_RAIS_flow_microdata_25_Nov_2020.log
+  log type:  text
+ closed on:  25 Nov 2020, 08:29:01
+------------------------------------------------------------------------------------------------------------------------

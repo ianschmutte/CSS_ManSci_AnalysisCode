@@ -1,0 +1,156 @@
+------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\../data/inpu
+> t/describe_WMS_plantyear_with_RAIS_25_Nov_2020.log
+  log type:  text
+ opened on:  25 Nov 2020, 08:26:42
+  1145:130(119297):4114609168:745135982       (data signature set)
+  (file ../data/input/datasig_WMS_plantyear_with_RAIS_25_Nov_2020.txt saved)
+
+Contains data from ../data/input/WMS_plantyear_with_RAIS.dta
+  obs:         1,145                          
+ vars:           130                          15 Apr 2020 14:30
+ size:       745,395                          (_dta has notes)
+------------------------------------------------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+------------------------------------------------------------------------------------------------------------------------
+cnae20_class    str6    %6s                   Industry class (5 digit) according to CNAE 2.0
+year            double  %12.0g              * ID: Year of WMS wave
+cnpj            str74   %74s                  ID: CNPJ
+state           str6    %6s                   
+median_wage     float   %9.0g                 Median wage (RAIS)
+w_10            float   %9.0g                 10th percentile wage (RAIS)
+pe_10           float   %9.0g                 10th percentile AKM worker effect (RAIS)
+w_90            float   %9.0g                 90th percentile wage (RAIS)
+pe_90           float   %9.0g                 90th percentile AKM worker effect (RAIS)
+AKM_coverage    double  %12.0g                Share of workforce with AKM worker effect
+mngr_share      float   %9.0g                 Share of managers in total workforce
+mngr_share_old  float   %9.0g                 (mean) mngr_share_old
+female_share    float   %9.0g                 Female share of workforce
+coll_share      float   %9.0g                 Share of workforce with a college degree
+white_share     float   %9.0g                 (mean) white_share
+log_wage        double  %12.0g                (mean) log_wage
+akm_pe          double  %12.0g                (mean) akm_pe
+akm_fe          double  %12.0g                (mean) akm_fe
+pe_mngr_jole    float   %9.0g                 (mean) pe_mngr_jole
+pe_mngr         float   %9.0g                 (mean) pe_mngr
+pe_mngr_old     float   %9.0g                 (mean) pe_mngr_old
+pe_lab_jole     float   %9.0g                 (mean) pe_lab_jole
+pe_lab          float   %9.0g                 (mean) pe_lab
+pe_lab_old      float   %9.0g                 (mean) pe_lab_old
+lw_mngr_jole    float   %9.0g                 (mean) lw_mngr_jole
+lw_lab_jole     float   %9.0g                 (mean) lw_lab_jole
+lw_mngr         float   %9.0g                 (mean) lw_mngr
+lw_lab          float   %9.0g                 (mean) lw_lab
+lw_mngr_old     float   %9.0g                 (mean) lw_mngr_old
+lw_lab_old      float   %9.0g                 (mean) lw_lab_old
+w_sd            float   %9.0g                 (sd) w_sd
+pe_sd           float   %9.0g                 (sd) pe_sd
+num_workers     long    %9.0g                 Number of contracts active on Dec 31
+cv_pe           float   %9.0g                 Coefficient of Variation in ln(Employee quality)
+cv_w            float   %9.0g                 Coefficient of Variation in Log Wages
+pe9010          float   %9.0g                 90-10 ln(Employee quality)
+w9010           float   %9.0g                 90-10 ln(Wages)
+account_id      str22   %22s                * ID: BvD account ID (original)
+sic             int     %9.0g                 ID: 3-digit SIC
+lean1           float   %10.0g              * MGMT: Intro to lean
+lean2           float   %10.0g              * MGMT: Rationale for lean
+perf1           float   %10.0g              * MGMT: Process Documentation
+perf2           float   %10.0g              * MGMT: Performance Tracking
+perf3           float   %10.0g              * MGMT: Performance Review
+perf4           float   %10.0g              * MGMT: Performance Dialogue
+perf5           float   %10.0g              * MGMT: Consequence Management
+perf6           float   %10.0g              * MGMT: Type of Targets
+perf7           float   %10.0g              * MGMT: Interconnection of Goals
+perf8           float   %10.0g              * MGMT: Time Horizon
+perf9           float   %10.0g              * MGMT: Goals are Stretching
+perf10          float   %10.0g              * MGMT: Clarity of Goals and Measurement
+talent1         float   %10.0g              * MGMT: Instilling a Talent Mindset
+talent2         float   %10.0g              * MGMT: Building a High-Performance Culture
+talent3         float   %10.0g              * MGMT: Making Room for Talent
+talent4         float   %10.0g              * MGMT: Developing Talent
+talent5         float   %10.0g              * MGMT: Creating a Distinctive EVP
+talent6         float   %10.0g              * MGMT: Retaining Talent
+emp_firm        long    %10.0g              * FIRM: # employees (firm)
+xsite1          int     %10.0g              * FIRM: # production sites (total)
+xsite2          int     %10.0g              * FIRM: # production sites (abroad)
+mne_yn          byte    %10.0g              * FIRM: =1 if multinational
+firmage         float   %9.0g               * FIRM: firm age
+competition     byte    %10.0g              * FIRM: # competitors (reported/perceived)
+ownership       str37   %37s                * OWN: Who knows the firm
+family          float   %9.0g                 OWN: =1 if family firm
+founder         float   %9.0g                 OWN: =1 if founder firm
+union           float   %10.0g              * WORK: % union members
+percent_m       float   %10.0g              * WORK: % mgrs in the firm
+degree_t        float   %9.0g               * WORK: % all workers with degree
+female_t        float   %9.0g                 WORK: % female, total
+management      float   %9.0g                 MGMT: Overall management score
+operations      float   %9.0g                 MGMT: Average of lean1 & lean2
+monitor         float   %9.0g                 MGMT: Average of perf1 to perf5
+target          float   %9.0g                 MGMT: Average of perf6 to perf10
+people          float   %9.0g                 MGMT: Average of talent1 to talent6
+formal          float   %23.0g     struc      Management score >= 3
+in_rais         float   %9.0g                 
+has_akm         float   %9.0g                 
+mis_akm_pe      float   %9.0g                 
+mis_lw_mngr     float   %9.0g                 
+mis_pe_mngr     float   %9.0g                 
+mis_lw_mngr_old float   %9.0g                 
+mis_pe_mngr_old float   %9.0g                 
+mis_lw_mngr_j~e float   %9.0g                 
+mis_pe_mngr_j~e float   %9.0g                 
+mis_lw_lab      float   %9.0g                 
+mis_pe_lab      float   %9.0g                 
+mis_lw_lab_jole float   %9.0g                 
+mis_pe_lab_jole float   %9.0g                 
+mis_lw_lab_old  float   %9.0g                 
+mis_pe_lab_old  float   %9.0g                 
+mis_competition float   %9.0g                 
+compet_cat      float   %9.0g                 MGMT: 3 category number of competitors (from BBCVW)
+own_grp         float   %9.0g                 group(ownership)
+own_cat         float   %9.0g                 MGMT: 6 categories of ownership (from BBCVW)
+sic2            str2    %9s                   2-digit SIC code (WMS)
+region          float   %9.0g                 Brazilian region (WMS)
+lemp            float   %9.0g                 Nat. log of firm employment (WMS)
+lfirmage        float   %9.0g                 Nat. log of firm age (WMS)
+zlean1          float   %9.0g                 Standardized values of (lean1)
+zlean2          float   %9.0g                 Standardized values of (lean2)
+zperf1          float   %9.0g                 Standardized values of (perf1)
+zperf2          float   %9.0g                 Standardized values of (perf2)
+zperf3          float   %9.0g                 Standardized values of (perf3)
+zperf4          float   %9.0g                 Standardized values of (perf4)
+zperf5          float   %9.0g                 Standardized values of (perf5)
+zperf6          float   %9.0g                 Standardized values of (perf6)
+zperf7          float   %9.0g                 Standardized values of (perf7)
+zperf8          float   %9.0g                 Standardized values of (perf8)
+zperf9          float   %9.0g                 Standardized values of (perf9)
+zperf10         float   %9.0g                 Standardized values of (perf10)
+ztalent1        float   %9.0g                 Standardized values of (talent1)
+ztalent2        float   %9.0g                 Standardized values of (talent2)
+ztalent3        float   %9.0g                 Standardized values of (talent3)
+ztalent4        float   %9.0g                 Standardized values of (talent4)
+ztalent5        float   %9.0g                 Standardized values of (talent5)
+ztalent6        float   %9.0g                 Standardized values of (talent6)
+zmanagement     float   %9.0g                 Management score
+zoperations     float   %9.0g                 Management score (operations)
+zmonitor        float   %9.0g                 Management score (monitoring)
+ztarget         float   %9.0g                 Management score (targets)
+zpeople         float   %9.0g                 Management score (people)
+zakm_pe         float   %9.0g                 Mean employee quality
+zakm_fe         float   %9.0g                 Firm effect (in wages)
+zpe_mngr        float   %9.0g                 Mean manager quality (occ.-based)
+zpe_lab         float   %9.0g                 Mean non-manager quality (occ.-based
+zpe_mngr_jole   float   %9.0g                 Mean manager quality (BBCVW measure)
+zpe_lab_jole    float   %9.0g                 Mean non-manager quality (BBCVW measure)
+zpe_mngr_old    float   %9.0g                 Standardized values of (pe_mngr_old)
+zpe_lab_old     float   %9.0g                 Standardized values of (pe_lab_old)
+                                            * indicated variables have notes
+------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\../data/inpu
+> t/describe_WMS_plantyear_with_RAIS_25_Nov_2020.log
+  log type:  text
+ closed on:  25 Nov 2020, 08:26:42
+------------------------------------------------------------------------------------------------------------------------

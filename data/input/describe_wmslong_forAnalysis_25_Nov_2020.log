@@ -1,0 +1,67 @@
+------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\../data/inpu
+> t/describe_wmslong_forAnalysis_25_Nov_2020.log
+  log type:  text
+ opened on:  25 Nov 2020, 08:29:01
+  1145:41(77449):3558156794:2224512945       (data signature set)
+  (file ../data/input/datasig_wmslong_forAnalysis_25_Nov_2020.txt saved)
+
+Contains data from ../data/input/wmslong_forAnalysis.dta
+  obs:         1,145                          
+ vars:            41                          24 Feb 2020 15:56
+ size:       250,755                          (_dta has notes)
+------------------------------------------------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+------------------------------------------------------------------------------------------------------------------------
+account_id      str22   %22s                * ID: BvD account ID (original)
+cnpj            str18   %18s                  ID: CNPJ
+year            double  %12.0g              * ID: Year of WMS wave
+sic             int     %9.0g                 ID: 3-digit SIC
+lean1           float   %10.0g              * MGMT: Intro to lean
+lean2           float   %10.0g              * MGMT: Rationale for lean
+perf1           float   %10.0g              * MGMT: Process Documentation
+perf2           float   %10.0g              * MGMT: Performance Tracking
+perf3           float   %10.0g              * MGMT: Performance Review
+perf4           float   %10.0g              * MGMT: Performance Dialogue
+perf5           float   %10.0g              * MGMT: Consequence Management
+perf6           float   %10.0g              * MGMT: Type of Targets
+perf7           float   %10.0g              * MGMT: Interconnection of Goals
+perf8           float   %10.0g              * MGMT: Time Horizon
+perf9           float   %10.0g              * MGMT: Goals are Stretching
+perf10          float   %10.0g              * MGMT: Clarity of Goals and Measurement
+talent1         float   %10.0g              * MGMT: Instilling a Talent Mindset
+talent2         float   %10.0g              * MGMT: Building a High-Performance Culture
+talent3         float   %10.0g              * MGMT: Making Room for Talent
+talent4         float   %10.0g              * MGMT: Developing Talent
+talent5         float   %10.0g              * MGMT: Creating a Distinctive EVP
+talent6         float   %10.0g              * MGMT: Retaining Talent
+emp_firm        long    %10.0g              * FIRM: # employees (firm)
+xsite1          int     %10.0g              * FIRM: # production sites (total)
+xsite2          int     %10.0g              * FIRM: # production sites (abroad)
+mne_yn          byte    %10.0g              * FIRM: =1 if multinational
+firmage         int     %9.0g               * FIRM: firm age
+competition     byte    %10.0g              * FIRM: # competitors (reported/perceived)
+ownership       str37   %37s                * OWN: Who knows the firm
+family          float   %9.0g                 OWN: =1 if family firm
+founder         float   %9.0g                 OWN: =1 if founder firm
+union           float   %10.0g              * WORK: % union members
+percent_m       float   %10.0g              * WORK: % mgrs in the firm
+degree_t        float   %9.0g               * WORK: % all workers with degree
+female_t        float   %9.0g                 WORK: % female, total
+management      float   %9.0g                 MGMT: Overall management score
+operations      float   %9.0g                 MGMT: Average of lean1 & lean2
+monitor         float   %9.0g                 MGMT: Average of perf1 to perf5
+target          float   %9.0g                 MGMT: Average of perf6 to perf10
+people          float   %9.0g                 MGMT: Average of talent1 to talent6
+formal          float   %23.0g     struc      Management score >= 3
+                                            * indicated variables have notes
+------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\../data/inpu
+> t/describe_wmslong_forAnalysis_25_Nov_2020.log
+  log type:  text
+ closed on:  25 Nov 2020, 08:29:01
+------------------------------------------------------------------------------------------------------------------------

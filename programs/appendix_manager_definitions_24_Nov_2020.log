@@ -1,0 +1,148 @@
+------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\appendix_man
+> ager_definitions_24_Nov_2020.log
+  log type:  text
+ opened on:  24 Nov 2020, 19:18:33
+
+. 
+. /* install any packages locally */
+. sysdir set PERSONAL "$adobase/ado/personal"
+
+. sysdir set PLUS     "$adobase/ado/plus"
+
+. sysdir set SITE     "$adobase/ado/site"
+
+. 
+. /* See https://www.stata.com/manuals13/pcreturn.pdf#pcreturn */
+. local variant = cond(c(MP),"MP",cond(c(SE),"SE",c(flavor)) )  
+
+. 
+. di "=== SYSTEM DIAGNOSTICS ==="
+=== SYSTEM DIAGNOSTICS ===
+
+. di "Stata version: `c(stata_version)'"
+Stata version: 15.1
+
+. di "Updated as of: `c(born_date)'"
+Updated as of: 03 Feb 2020
+
+. di "Variant:       `variant'"
+Variant:       MP
+
+. di "Processors:    `c(processors)'"
+Processors:    4
+
+. di "OS:            `c(os)' `c(osdtl)'"
+OS:            Windows 64-bit
+
+. di "Machine type:  `c(machine_type)'"
+Machine type:  PC (64-bit x86-64)
+
+. di "=========================="
+==========================
+
+. 
+end of do-file
+
+. 
+. pause on
+
+. set more off
+
+. set linesize 120                                                                                                      
+>  
+
+. 
+. /* %*************************************************************************** */
+. /*code here compares occupational classifications against deciles of the person effect distribution*/
+. use "${inpath}/WMS_RAIS_linked_microdata.dta", clear
+
+. egen jole_mgr_quart = xtile(akm_pe) if sep~=1, by(cnpj year) nq(4)
+(181111 missing values generated)
+
+. /* gen jole_mgr = jole_mgr_quart == 4 */
+. /* egen jole_mgr_dec = xtile(akm_pe) if sep~=1, by(cnpj year) nq(10) */
+. gen occ = "    "
+
+. replace occ = "prod" if occ_prod == 1
+(333,206 real changes made)
+
+. replace occ = "tech" if occ_tech == 1
+(54,947 real changes made)
+
+. replace occ = "mngr" if occ_mngr == 1
+(10,138 real changes made)
+
+. replace occ = "su_p" if occ_prod == 1 & occ_supr == 1
+(12,471 real changes made)
+
+. replace occ = "su_t" if occ_tech == 1 & occ_supr == 1
+(342 real changes made)
+
+. replace occ = "othr" if occ == "    "
+(63 real changes made)
+
+. 
+. tab jole_mgr_quart occ if year==2008, col
+
++-------------------+
+| Key               |
+|-------------------|
+|     frequency     |
+| column percentage |
++-------------------+
+
+jole_mgr_q |                          occ
+      uart |      mngr       prod       su_p       su_t       tech |     Total
+-----------+-------------------------------------------------------+----------
+         1 |        45     26,973        281         42      2,180 |    29,521 
+           |      1.29      29.93       5.87      23.08      11.60 |     25.15 
+-----------+-------------------------------------------------------+----------
+         2 |       122     25,345        393         43      3,375 |    29,278 
+           |      3.50      28.12       8.21      23.63      17.96 |     24.94 
+-----------+-------------------------------------------------------+----------
+         3 |       321     23,042        883         55      5,112 |    29,413 
+           |      9.22      25.56      18.45      30.22      27.20 |     25.06 
+-----------+-------------------------------------------------------+----------
+         4 |     2,993     14,773      3,230         42      8,128 |    29,166 
+           |     85.98      16.39      67.47      23.08      43.25 |     24.85 
+-----------+-------------------------------------------------------+----------
+     Total |     3,481     90,133      4,787        182     18,795 |   117,378 
+           |    100.00     100.00     100.00     100.00     100.00 |    100.00 
+
+. 
+. tab jole_mgr_quart occ if year==2008, col nofreq
+
+jole_mgr_q |                          occ
+      uart |      mngr       prod       su_p       su_t       tech |     Total
+-----------+-------------------------------------------------------+----------
+         1 |      1.29      29.93       5.87      23.08      11.60 |     25.15 
+         2 |      3.50      28.12       8.21      23.63      17.96 |     24.94 
+         3 |      9.22      25.56      18.45      30.22      27.20 |     25.06 
+         4 |     85.98      16.39      67.47      23.08      43.25 |     24.85 
+-----------+-------------------------------------------------------+----------
+     Total |    100.00     100.00     100.00     100.00     100.00 |    100.00 
+
+. 
+. tab occ if year==2008
+
+        occ |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       mngr |      4,540        2.41        2.41
+       othr |         26        0.01        2.43
+       prod |    151,780       80.70       83.13
+       su_p |      6,098        3.24       86.37
+       su_t |        211        0.11       86.48
+       tech |     25,424       13.52      100.00
+------------+-----------------------------------
+      Total |    188,079      100.00
+
+. 
+. log close
+      name:  <unnamed>
+       log:  E:\Dropbox\@Projects_Active\MGMT_source\data\ManSci\replication_package\analysis_test\programs\appendix_man
+> ager_definitions_24_Nov_2020.log
+  log type:  text
+ closed on:  24 Nov 2020, 19:19:52
+------------------------------------------------------------------------------------------------------------------------
