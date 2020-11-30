@@ -12,7 +12,7 @@ The Analysis Data Archive contains the analysis data used as inputs for the code
 
 The Data Preparation Code Archive includes code that transforms the raw confidential input files into the analysis data. That archive is released separately as [![DOI](https://zenodo.org/badge/316555193.svg)](https://zenodo.org/badge/latestdoi/316555193)
 
-Please direct all questions to `schmutte@uga.edu`
+Please direct all questions to `schmutte@uga.edu`. Please follow attribution practices outlined in `./license.Rmd`
 
 ## Data Availability Statement
 
